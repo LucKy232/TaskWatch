@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="127.99999"
+   height="127.99999"
+   viewBox="0 0 53.792178 53.792178"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <linearGradient
+       id="swatch124">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="0"
+         id="stop124" />
+    </linearGradient>
+    <linearGradient
+       id="swatch123">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="0"
+         id="stop123" />
+    </linearGradient>
+    <linearGradient
+       id="swatch121">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="0"
+         id="stop121" />
+    </linearGradient>
+    <linearGradient
+       id="swatch120">
+      <stop
+         style="stop-color:#da6666;stop-opacity:0;"
+         offset="0"
+         id="stop120" />
+    </linearGradient>
+    <linearGradient
+       id="swatch117">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop117" />
+    </linearGradient>
+    <linearGradient
+       id="swatch114">
+      <stop
+         style="stop-color:#129500;stop-opacity:1;"
+         offset="0"
+         id="stop114" />
+    </linearGradient>
+    <linearGradient
+       id="swatch106">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop106" />
+    </linearGradient>
+    <linearGradient
+       id="swatch105">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop105" />
+    </linearGradient>
+    <linearGradient
+       id="swatch99">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="0"
+         id="stop99" />
+    </linearGradient>
+    <linearGradient
+       id="swatch77">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="0"
+         id="stop77" />
+    </linearGradient>
+    <linearGradient
+       id="swatch75">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop75" />
+    </linearGradient>
+    <linearGradient
+       id="swatch74">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop74" />
+    </linearGradient>
+    <linearGradient
+       id="swatch73">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop73" />
+    </linearGradient>
+    <linearGradient
+       id="swatch15">
+      <stop
+         style="stop-color:#45b2fd;stop-opacity:1;"
+         offset="0"
+         id="stop15" />
+    </linearGradient>
+  </defs>
+  <g
+     id="layer1">
+    <ellipse
+       style="fill:none;stroke:#ffffff;stroke-width:2.01721;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+       id="path1"
+       cx="26.896093"
+       cy="26.896091"
+       rx="24.206482"
+       ry="24.20648" />
+    <path
+       style="display:inline;fill:none;stroke:#ffffff;stroke-width:1.68101;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+       d="M 27.033534,5.5070266 V 25.123073"
+       id="path2" />
+    <path
+       style="display:inline;fill:none;stroke:#ffffff;stroke-width:1.68101;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+       d="m 16.301775,8.7779446 1.825457,3.1617834 m -9.5531944,4.642019 3.1617834,1.825457 M 5.783522,27.203907 H 9.4344354 M 8.6779446,37.798225 11.839728,35.972768 m 4.642019,9.553194 1.825457,-3.161783 m 8.796703,5.952299 v -3.650913 m 10.594318,0.75649 -1.825457,-3.161783 m 9.553194,-4.642019 -3.161783,-1.825457 m 5.952299,-8.796703 h -3.650913 m 0.75649,-10.594318 -3.161783,1.825457 M 37.518253,8.6740376 35.692796,11.835821"
+       id="path3" />
+    <path
+       style="display:inline;fill:none;stroke:#ffffff;stroke-width:1.68101;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+       d="M 35.861579,21.348863 27.481697,26.18699"
+       id="path4" />
+  </g>
+</svg>

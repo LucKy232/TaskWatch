@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://btt0oqc06ljck"]
+
+[ext_resource type="Script" uid="uid://b8i65fiqekqgh" path="res://7SegmentDisplay/7_segment_array.gd" id="1_hli46"]
+[ext_resource type="PackedScene" uid="uid://vfjqcewlnjup" path="res://7SegmentDisplay/7_segment.tscn" id="2_tttp1"]
+[ext_resource type="PackedScene" uid="uid://cjargy4b0st5h" path="res://7SegmentDisplay/dots.tscn" id="3_tttp1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1ugkr"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.1, 0.1, 0.1, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[node name="7SegmentTimer" type="PanelContainer" unique_id=735116144 node_paths=PackedStringArray("segments")]
+offset_right = 560.0
+offset_bottom = 160.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1ugkr")
+script = ExtResource("1_hli46")
+segments = [NodePath("HBoxContainer/7Segment1"), NodePath("HBoxContainer/7Segment2"), NodePath("HBoxContainer/7Segment3"), NodePath("HBoxContainer/7Segment4"), NodePath("HBoxContainer/7Segment5"), NodePath("HBoxContainer/7Segment6"), NodePath("HBoxContainer/Extra0"), NodePath("HBoxContainer/Extra1")]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1532034494]
+layout_mode = 2
+
+[node name="Extra0" parent="HBoxContainer" unique_id=1102154902 instance=ExtResource("2_tttp1")]
+visible = false
+layout_mode = 2
+
+[node name="Extra1" parent="HBoxContainer" unique_id=1971785803 instance=ExtResource("2_tttp1")]
+visible = false
+layout_mode = 2
+
+[node name="7Segment1" parent="HBoxContainer" unique_id=1338123524 instance=ExtResource("2_tttp1")]
+layout_mode = 2
+
+[node name="7Segment2" parent="HBoxContainer" unique_id=1250928915 instance=ExtResource("2_tttp1")]
+layout_mode = 2
+
+[node name="Dots1" parent="HBoxContainer" unique_id=402741285 instance=ExtResource("3_tttp1")]
+layout_mode = 2
+
+[node name="7Segment3" parent="HBoxContainer" unique_id=649743435 instance=ExtResource("2_tttp1")]
+layout_mode = 2
+
+[node name="7Segment4" parent="HBoxContainer" unique_id=695576513 instance=ExtResource("2_tttp1")]
+layout_mode = 2
+
+[node name="Dots2" parent="HBoxContainer" unique_id=1453833277 instance=ExtResource("3_tttp1")]
+layout_mode = 2
+
+[node name="7Segment5" parent="HBoxContainer" unique_id=1512345914 instance=ExtResource("2_tttp1")]
+layout_mode = 2
+
+[node name="7Segment6" parent="HBoxContainer" unique_id=761893806 instance=ExtResource("2_tttp1")]
+layout_mode = 2

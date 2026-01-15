@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://cjargy4b0st5h"]
+
+[ext_resource type="Shader" uid="uid://dexvgpvdbx7xj" path="res://7SegmentDisplay/dots.gdshader" id="1_k07cg"]
+[ext_resource type="Texture2D" uid="uid://bsfdyr6ewmac2" path="res://7SegmentDisplay/dots.png" id="2_gkuys"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_grvma"]
+shader = ExtResource("1_k07cg")
+shader_parameter/digit_color = Color(0.72156864, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72156864, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("2_gkuys")
+shader_parameter/lit = false
+
+[node name="Dots" type="ColorRect" unique_id=402741285]
+material = SubResource("ShaderMaterial_grvma")
+custom_minimum_size = Vector2(22, 128)
+offset_right = 22.0
+offset_bottom = 128.0
+size_flags_horizontal = 0
+size_flags_vertical = 0

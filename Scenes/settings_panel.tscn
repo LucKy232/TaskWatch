@@ -1,0 +1,141 @@
+[gd_scene format=3 uid="uid://bg10tcirfjt2m"]
+
+[ext_resource type="Script" uid="uid://b3vgopaxmwo5o" path="res://Scripts/settings_panel.gd" id="1_8hrck"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gatba"]
+bg_color = Color(0.6, 0.44400004, 0.44400004, 0.57254905)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[node name="SettingsPanel" type="Control" unique_id=1190921543]
+custom_minimum_size = Vector2(220, 195)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 200.0
+offset_bottom = 150.0
+script = ExtResource("1_8hrck")
+
+[node name="Background" type="Panel" parent="." unique_id=1536580708]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_gatba")
+
+[node name="MarginContainer" type="MarginContainer" parent="Background" unique_id=1705880028]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Settings" type="VBoxContainer" parent="Background/MarginContainer" unique_id=1883475124]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SettingsTop" type="Label" parent="Background/MarginContainer/Settings" unique_id=1601353295]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 20
+text = "Settings"
+horizontal_alignment = 1
+
+[node name="HBoxColor" type="HBoxContainer" parent="Background/MarginContainer/Settings" unique_id=965868899]
+custom_minimum_size = Vector2(0, 29)
+layout_mode = 2
+
+[node name="Name" type="Label" parent="Background/MarginContainer/Settings/HBoxColor" unique_id=1775934278]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Color"
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="Background/MarginContainer/Settings/HBoxColor" unique_id=1688309036]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(78, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+color = Color(0.72156864, 0, 0, 1)
+edit_intensity = false
+
+[node name="HBoxBackground" type="HBoxContainer" parent="Background/MarginContainer/Settings" unique_id=49573930]
+custom_minimum_size = Vector2(0, 29)
+layout_mode = 2
+
+[node name="Name" type="Label" parent="Background/MarginContainer/Settings/HBoxBackground" unique_id=1563525405]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Background"
+
+[node name="BGColorPickerButton" type="ColorPickerButton" parent="Background/MarginContainer/Settings/HBoxBackground" unique_id=38929425]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(78, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+color = Color(0, 0, 0, 0.28235295)
+edit_intensity = false
+
+[node name="HBoxScale" type="HBoxContainer" parent="Background/MarginContainer/Settings" unique_id=237760382]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="Background/MarginContainer/Settings/HBoxScale" unique_id=615639750]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Scale"
+
+[node name="ScaleOptionButton" type="OptionButton" parent="Background/MarginContainer/Settings/HBoxScale" unique_id=593781657]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(78, 0)
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_constants/arrow_margin = 4
+item_count = 10
+popup/item_0/text = "10%"
+popup/item_0/id = 0
+popup/item_1/text = "20%"
+popup/item_1/id = 1
+popup/item_2/text = "30%"
+popup/item_2/id = 2
+popup/item_3/text = "40%"
+popup/item_3/id = 3
+popup/item_4/text = "50%"
+popup/item_4/id = 4
+popup/item_5/text = "75%"
+popup/item_5/id = 5
+popup/item_6/text = "100%"
+popup/item_6/id = 6
+popup/item_7/text = "150%"
+popup/item_7/id = 7
+popup/item_8/text = "200%"
+popup/item_8/id = 8
+popup/item_9/text = "300%"
+popup/item_9/id = 9
+
+[node name="HBoxShowOff" type="HBoxContainer" parent="Background/MarginContainer/Settings" unique_id=30997560]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="Background/MarginContainer/Settings/HBoxShowOff" unique_id=2146609684]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Unlit segments"
+
+[node name="UnlitSegmentsCheckbox" type="CheckBox" parent="Background/MarginContainer/Settings/HBoxShowOff" unique_id=2124418558]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+button_pressed = true
+
+[connection signal="color_changed" from="Background/MarginContainer/Settings/HBoxColor/ColorPickerButton" to="." method="_on_color_picker_button_color_changed"]
+[connection signal="popup_closed" from="Background/MarginContainer/Settings/HBoxColor/ColorPickerButton" to="." method="_on_color_picker_button_popup_closed"]
+[connection signal="color_changed" from="Background/MarginContainer/Settings/HBoxBackground/BGColorPickerButton" to="." method="_on_bg_color_picker_button_color_changed"]
+[connection signal="popup_closed" from="Background/MarginContainer/Settings/HBoxBackground/BGColorPickerButton" to="." method="_on_bg_color_picker_button_popup_closed"]
+[connection signal="item_selected" from="Background/MarginContainer/Settings/HBoxScale/ScaleOptionButton" to="." method="_on_scale_option_button_item_selected"]
+[connection signal="toggled" from="Background/MarginContainer/Settings/HBoxShowOff/UnlitSegmentsCheckbox" to="." method="_on_unlit_segments_checkbox_toggled"]

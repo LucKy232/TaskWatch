@@ -1,0 +1,84 @@
+[gd_scene format=3 uid="uid://b3bhysdbxda66"]
+
+[ext_resource type="Script" uid="uid://bo5cb2eqb2c4d" path="res://Scripts/entry.gd" id="1_xsdkm"]
+[ext_resource type="Texture2D" uid="uid://c5cerpl8isdkx" path="res://Icons/CloseButton.svg" id="2_oodbi"]
+
+[node name="Entry" type="Control" unique_id=236321926]
+custom_minimum_size = Vector2(320, 80)
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 1
+script = ExtResource("1_xsdkm")
+
+[node name="Background" type="Panel" parent="." unique_id=805836161]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1662027671]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=356318138]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=2119540061]
+layout_mode = 2
+
+[node name="Description" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=470353520]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Description"
+
+[node name="DurationLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=2098806935]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Duration"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=818511337]
+layout_mode = 2
+
+[node name="StartDateTime" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2" unique_id=385365309]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Start DateTime"
+
+[node name="BreakDuration" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1936633148]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Start DateTime"
+
+[node name="EndDateTime" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1887315642]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 2
+text = "End DateTime"
+
+[node name="EraseButton" type="Button" parent="." unique_id=114667475]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -8.0
+offset_right = 8.0
+offset_bottom = 16.0
+grow_horizontal = 2
+icon = ExtResource("2_oodbi")
+
+[connection signal="pressed" from="EraseButton" to="." method="_on_erase_button_pressed"]

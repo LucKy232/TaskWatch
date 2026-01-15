@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://b113uq8af731u"]
+
+[ext_resource type="Script" uid="uid://cdbfqjjqn54hw" path="res://Scripts/break_time.gd" id="1_crtnk"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_p1xju"]
+color = Color(1, 1, 1, 1)
+grow_begin = -10.0
+grow_end = -10.0
+
+[node name="BreakTime" type="HBoxContainer" unique_id=744823697]
+custom_minimum_size = Vector2(320, 10)
+offset_right = 320.0
+offset_bottom = 10.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+script = ExtResource("1_crtnk")
+
+[node name="Left" type="Panel" parent="." unique_id=1816018674]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxLine_p1xju")
+
+[node name="BreakLabel" type="Label" parent="." unique_id=298586696]
+layout_mode = 2
+text = "Break Time"
+
+[node name="Right" type="Panel" parent="." unique_id=1914807374]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxLine_p1xju")

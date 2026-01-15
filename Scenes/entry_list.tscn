@@ -1,0 +1,77 @@
+[gd_scene format=3 uid="uid://d172ayshc1gb8"]
+
+[ext_resource type="Script" uid="uid://r1b6dbyoy87d" path="res://Scripts/entry_list.gd" id="1_7y1um"]
+
+[node name="EntryList" type="Control" unique_id=2044402737]
+custom_minimum_size = Vector2(320, 400)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 320.0
+offset_bottom = 400.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+script = ExtResource("1_7y1um")
+entry_scene = "uid://b3bhysdbxda66"
+break_time_scene = "uid://b113uq8af731u"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1484746069]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="TopButtonsHBox" type="HBoxContainer" parent="VBoxContainer" unique_id=1121752709]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="New" type="Button" parent="VBoxContainer/TopButtonsHBox" unique_id=1733126944]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "New"
+
+[node name="DeleteProject" type="Button" parent="VBoxContainer/TopButtonsHBox" unique_id=1305656750]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Delete Project"
+
+[node name="Collapse" type="Button" parent="VBoxContainer/TopButtonsHBox" unique_id=1263574840]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Collapse Tasks"
+
+[node name="Control" type="Control" parent="VBoxContainer" unique_id=649893727]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/Control" unique_id=1954344679]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Control/PanelContainer" unique_id=1808077022]
+layout_mode = 2
+
+[node name="ProjectName" type="LineEdit" parent="VBoxContainer/Control/PanelContainer/VBoxContainer" unique_id=735818890]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+placeholder_text = "Project name"
+alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/Control/PanelContainer/VBoxContainer" unique_id=1016366333]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EntriesContainer" type="VBoxContainer" parent="VBoxContainer/Control/PanelContainer/VBoxContainer/ScrollContainer" unique_id=1169474574]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[connection signal="text_changed" from="VBoxContainer/Control/PanelContainer/VBoxContainer/ProjectName" to="." method="_on_project_name_text_changed"]
