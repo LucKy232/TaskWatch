@@ -6,10 +6,11 @@
 [ext_resource type="Texture2D" uid="uid://c7j1psfjgl2pu" path="res://Icons/PlayButton.svg" id="2_7mycd"]
 [ext_resource type="Texture2D" uid="uid://1vutdcm3s7mm" path="res://Icons/StopButton.svg" id="3_272bh"]
 [ext_resource type="Texture2D" uid="uid://30x5sxwsv151" path="res://Icons/PauseButton.svg" id="3_efxa6"]
-[ext_resource type="Texture2D" uid="uid://cy3022jqoo71v" path="res://Icons/EqualButton.svg" id="4_5vw27"]
+[ext_resource type="Script" uid="uid://bqav2kwjmehkf" path="res://Scripts/draggable.gd" id="4_dg77c"]
 [ext_resource type="Texture2D" uid="uid://btwpx6nbhlnnc" path="res://Icons/ClockButton.svg" id="6_4c57u"]
 [ext_resource type="Texture2D" uid="uid://cay3cx7m6ycjx" path="res://Icons/ListButton.svg" id="6_kek77"]
 [ext_resource type="Texture2D" uid="uid://4mknea08ggfl" path="res://Icons/SettingsButton.svg" id="7_4c57u"]
+[ext_resource type="Texture2D" uid="uid://d0cavs0ms5itf" path="res://Icons/CloseAppButton.svg" id="9_dg77c"]
 [ext_resource type="PackedScene" uid="uid://d172ayshc1gb8" path="res://Scenes/entry_list.tscn" id="9_efxa6"]
 
 [node name="Main" type="Control" unique_id=1237992629]
@@ -19,6 +20,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 1
 script = ExtResource("1_h2yge")
 play_icon = ExtResource("2_7mycd")
 pause_icon = ExtResource("3_efxa6")
@@ -27,15 +31,18 @@ pause_icon = ExtResource("3_efxa6")
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
+mouse_filter = 0
+script = ExtResource("4_dg77c")
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="TimerAndButtons" unique_id=1630515425]
+[node name="TimerAndSideButtons" type="HBoxContainer" parent="TimerAndButtons" unique_id=1630515425]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TimerAndButtons/HBoxContainer2" unique_id=224585707]
+[node name="ButtonsVBox" type="VBoxContainer" parent="TimerAndButtons/TimerAndSideButtons" unique_id=224585707]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 
-[node name="PlayPauseButton" type="Button" parent="TimerAndButtons/HBoxContainer2/VBoxContainer" unique_id=720547510]
+[node name="PlayPauseButton" type="Button" parent="TimerAndButtons/TimerAndSideButtons/ButtonsVBox" unique_id=720547510]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -43,49 +50,55 @@ tooltip_text = "Start / Pause"
 toggle_mode = true
 icon = ExtResource("2_7mycd")
 
-[node name="StopButton" type="Button" parent="TimerAndButtons/HBoxContainer2/VBoxContainer" unique_id=285193584]
+[node name="StopButton" type="Button" parent="TimerAndButtons/TimerAndSideButtons/ButtonsVBox" unique_id=285193584]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 tooltip_text = "Stop Task"
 icon = ExtResource("3_272bh")
 
-[node name="ShowTotalButton" type="Button" parent="TimerAndButtons/HBoxContainer2/VBoxContainer" unique_id=1371751418]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-tooltip_text = "Total Project Time"
-toggle_mode = true
-icon = ExtResource("4_5vw27")
-
-[node name="SegmentTimer" parent="TimerAndButtons/HBoxContainer2" unique_id=1045209636 instance=ExtResource("1_ig7tw")]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TimerAndButtons" unique_id=1075399920]
-layout_mode = 2
-
-[node name="TaskDescription" type="LineEdit" parent="TimerAndButtons/HBoxContainer" unique_id=16555986]
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Current Task Description"
-placeholder_text = "Task Description"
-
-[node name="ShowClockButton" type="Button" parent="TimerAndButtons/HBoxContainer" unique_id=419802243]
+[node name="ShowClockButton" type="Button" parent="TimerAndButtons/TimerAndSideButtons/ButtonsVBox" unique_id=419802243]
 layout_mode = 2
 tooltip_text = "Show Current Time"
 toggle_mode = true
 icon = ExtResource("6_4c57u")
 
-[node name="ShowListButton" type="Button" parent="TimerAndButtons/HBoxContainer" unique_id=917045471]
+[node name="SegmentTimer" parent="TimerAndButtons/TimerAndSideButtons" unique_id=1045209636 instance=ExtResource("1_ig7tw")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+mouse_filter = 1
+
+[node name="ButtonsHBox" type="HBoxContainer" parent="TimerAndButtons" unique_id=1075399920]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="TaskDescriptionLineEdit" type="LineEdit" parent="TimerAndButtons/ButtonsHBox" unique_id=16555986]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Current Task Description"
+placeholder_text = "Task Description"
+
+[node name="ShowListButton" type="Button" parent="TimerAndButtons/ButtonsHBox" unique_id=917045471]
+unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Show Task List"
+toggle_mode = true
 icon = ExtResource("6_kek77")
 
-[node name="ShowSettingsButton" type="Button" parent="TimerAndButtons/HBoxContainer" unique_id=1231767321]
+[node name="ShowSettingsButton" type="Button" parent="TimerAndButtons/ButtonsHBox" unique_id=1231767321]
+unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Show Settings Panel"
+toggle_mode = true
 icon = ExtResource("7_4c57u")
+
+[node name="ExitAppButton" type="Button" parent="TimerAndButtons/ButtonsHBox" unique_id=1371751418]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+tooltip_text = "Exit App"
+icon = ExtResource("9_dg77c")
 
 [node name="SettingsPanel" parent="." unique_id=1190921543 instance=ExtResource("2_0xm2m")]
 layout_mode = 0
@@ -101,5 +114,11 @@ offset_top = 237.0
 offset_right = 788.0
 offset_bottom = 637.0
 
-[connection signal="toggled" from="TimerAndButtons/HBoxContainer2/VBoxContainer/PlayPauseButton" to="." method="_on_play_pause_button_toggled"]
-[connection signal="pressed" from="TimerAndButtons/HBoxContainer2/VBoxContainer/StopButton" to="." method="_on_stop_button_pressed"]
+[connection signal="gui_input" from="TimerAndButtons" to="TimerAndButtons" method="_on_gui_input"]
+[connection signal="toggled" from="TimerAndButtons/TimerAndSideButtons/ButtonsVBox/PlayPauseButton" to="." method="_on_play_pause_button_toggled"]
+[connection signal="pressed" from="TimerAndButtons/TimerAndSideButtons/ButtonsVBox/StopButton" to="." method="_on_stop_button_pressed"]
+[connection signal="toggled" from="TimerAndButtons/TimerAndSideButtons/ButtonsVBox/ShowClockButton" to="." method="_on_show_clock_button_toggled"]
+[connection signal="text_changed" from="TimerAndButtons/ButtonsHBox/TaskDescriptionLineEdit" to="." method="_on_task_description_line_edit_text_changed"]
+[connection signal="toggled" from="TimerAndButtons/ButtonsHBox/ShowListButton" to="." method="_on_show_list_button_toggled"]
+[connection signal="toggled" from="TimerAndButtons/ButtonsHBox/ShowSettingsButton" to="." method="_on_show_settings_button_toggled"]
+[connection signal="pressed" from="TimerAndButtons/ButtonsHBox/ExitAppButton" to="." method="_on_exit_app_button_pressed"]

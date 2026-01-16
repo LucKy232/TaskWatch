@@ -21,39 +21,48 @@ offset_right = 560.0
 offset_bottom = 160.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_1ugkr")
 script = ExtResource("1_hli46")
-segments = [NodePath("HBoxContainer/7Segment1"), NodePath("HBoxContainer/7Segment2"), NodePath("HBoxContainer/7Segment3"), NodePath("HBoxContainer/7Segment4"), NodePath("HBoxContainer/7Segment5"), NodePath("HBoxContainer/7Segment6"), NodePath("HBoxContainer/Extra0"), NodePath("HBoxContainer/Extra1")]
+segments = [NodePath("HBoxContainer/7Segment1"), NodePath("HBoxContainer/7Segment2"), NodePath("HBoxContainer/7Segment3"), NodePath("HBoxContainer/7Segment4"), NodePath("HBoxContainer/7Segment5"), NodePath("HBoxContainer/7Segment6")]
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1532034494]
 layout_mode = 2
 
-[node name="Extra0" parent="HBoxContainer" unique_id=1102154902 instance=ExtResource("2_tttp1")]
-visible = false
-layout_mode = 2
-
-[node name="Extra1" parent="HBoxContainer" unique_id=1971785803 instance=ExtResource("2_tttp1")]
-visible = false
-layout_mode = 2
-
 [node name="7Segment1" parent="HBoxContainer" unique_id=1338123524 instance=ExtResource("2_tttp1")]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="7Segment2" parent="HBoxContainer" unique_id=1250928915 instance=ExtResource("2_tttp1")]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Dots1" parent="HBoxContainer" unique_id=402741285 instance=ExtResource("3_tttp1")]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="7Segment3" parent="HBoxContainer" unique_id=649743435 instance=ExtResource("2_tttp1")]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="7Segment4" parent="HBoxContainer" unique_id=695576513 instance=ExtResource("2_tttp1")]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Dots2" parent="HBoxContainer" unique_id=1453833277 instance=ExtResource("3_tttp1")]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="7Segment5" parent="HBoxContainer" unique_id=1512345914 instance=ExtResource("2_tttp1")]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="7Segment6" parent="HBoxContainer" unique_id=761893806 instance=ExtResource("2_tttp1")]
 layout_mode = 2
+mouse_filter = 1
+
+[node name="HoverTimer" type="Timer" parent="." unique_id=813751022]
+wait_time = 4.0
+one_shot = true
+autostart = true
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="timeout" from="HoverTimer" to="." method="_on_hover_timer_timeout"]

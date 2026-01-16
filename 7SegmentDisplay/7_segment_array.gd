@@ -3,11 +3,15 @@ class_name TaskTimer extends Control
 ## 0, 1 HH
 ## 2, 3 MM
 ## 4, 5 SS
-## 6, 7 HH extra
 @export var segments: Array[ColorRect]
+@onready var hover_timer: Timer = $HoverTimer
 @onready var h_box_container: HBoxContainer = $HBoxContainer
 @onready var dots_1: ColorRect = $HBoxContainer/Dots1
 @onready var dots_2: ColorRect = $HBoxContainer/Dots2
+
+signal show_buttons
+signal hide_buttons
+
 
 ## bits toggles the segments in the shader, by bitwise operations, index corresponds to digit displayed
 var bits: Array[int] = [
@@ -111,3 +115,16 @@ func display_number(number: float, decimals: int) -> void:
 		var bitmask: int = bits[digit]
 		segments[segment].material.set_shader_parameter("bitmask", bitmask)
 		segment += 1
+
+
+func _on_mouse_entered() -> void:
+	hover_timer.stop()
+	show_buttons.emit()
+
+
+func _on_mouse_exited() -> void:
+	hover_timer.start()
+
+
+func _on_hover_timer_timeout() -> void:
+	hide_buttons.emit()

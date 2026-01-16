@@ -15,6 +15,10 @@ run/main_scene="uid://c8nrsvxatuyhd"
 config/features=PackedStringArray("4.6", "Double Precision", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[debug]
+
+gdscript/warnings/integer_division=0
+
 [display]
 
 window/size/borderless=true
@@ -34,3 +38,4 @@ theme/custom_font="uid://y7k0ns51eorm"
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+viewport/transparent_background=true
