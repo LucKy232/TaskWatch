@@ -1,5 +1,6 @@
 class_name Main extends Control
 
+@export var settings_file_path: String = "user://settings_data.json"
 @export var play_icon: CompressedTexture2D
 @export var pause_icon: CompressedTexture2D
 @onready var task_timer: TaskTimer = %SegmentTimer
@@ -7,11 +8,18 @@ class_name Main extends Control
 @onready var settings_panel: SettingsPanel = $SettingsPanel
 @onready var timer_and_buttons: Draggable = $TimerAndButtons
 @onready var play_pause_button: Button = %PlayPauseButton
+@onready var stop_button: Button = %StopButton
+@onready var show_clock_button: Button = %ShowClockButton
+@onready var minimize_app_button: Button = %MinimizeAppButton
 @onready var task_description_line_edit: LineEdit = %TaskDescriptionLineEdit
 @onready var buttons_v_box: VBoxContainer = %ButtonsVBox
 @onready var buttons_h_box: HBoxContainer = %ButtonsHBox
 @onready var show_list_button: Button = %ShowListButton
 @onready var show_settings_button: Button = %ShowSettingsButton
+@onready var hover_timer: Timer = $HoverTimer
+@onready var system_tray: SystemTray = $SystemTray
+
+#var project_data: ProjectData
 
 var settings_data: SettingsData = SettingsData.new()
 var current_task: Task = Task.new(0)
@@ -20,19 +28,68 @@ var show_clock: bool = false
 
 func _ready() -> void:
 	call_deferred("resize_to_screen")
-	call_deferred("set_always_on_top", true)
 	call_deferred("set_mouse_passtrough")
 	settings_panel.color_changed.connect(_on_digit_color_changed)
 	settings_panel.bg_color_changed.connect(_on_background_color_changed)
 	settings_panel.scale_changed.connect(_on_scale_changed)
 	settings_panel.unlit_segments_toggled.connect(_on_unlit_segments_toggled)
 	settings_panel.color_picker_toggled.connect(_on_settings_color_picker_toggled)
-	task_timer.show_buttons.connect(_on_timer_show_buttons)
-	task_timer.hide_buttons.connect(_on_timer_hide_buttons)
+	settings_panel.always_on_top_toggled.connect(_on_always_on_top_toggled)
 	timer_and_buttons.position_changed.connect(_on_draggable_position_changed)
+	timer_and_buttons.gui_input.connect(_on_gui_input)
+	settings_panel.gui_input.connect(_on_gui_input)
+	entry_list.gui_input.connect(_on_gui_input)
+	settings_panel.popup_1.window_input.connect(_on_gui_input)
+	settings_panel.popup_2.window_input.connect(_on_gui_input)
+	settings_panel.popup_3.window_input.connect(_on_gui_input)
+	entry_list.project_name.text_changed.connect(_on_text_changed)
+	task_description_line_edit.text_changed.connect(_on_text_changed)
+	system_tray.system_tray_menu_pressed.connect(_on_system_tray_menu)
+	system_tray.status_indicator.pressed.connect(_on_status_indicator_pressed)
+	
+	set_button_shortcut_events()
+	# Load settings
+	if !FileAccess.file_exists(settings_file_path):
+		settings_data.opened_file_paths.append("user://%s%d.json" % [Time.get_datetime_string_from_system().remove_chars(":"), Time.get_ticks_msec()])
+		save_settings_data()
+	else:
+		load_settings_data()
+	# Load project
+	if settings_data.opened_file_paths.size() == 0:
+		settings_data.opened_file_paths.append("user://%s%d.json" % [Time.get_datetime_string_from_system().remove_chars(":"), Time.get_ticks_msec()])
+		save_settings_data()
+	else:
+		load_current_project_file()
+
+
+func minimize_window() -> void:
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, true)
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MINIMIZED)
+
+
+func maximize_window() -> void:
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, false)
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MAXIMIZED)
+
+
+func set_button_shortcut_events() -> void:
+	play_pause_button.shortcut = Shortcut.new()
+	stop_button.shortcut = Shortcut.new()
+	show_clock_button.shortcut = Shortcut.new()
+	minimize_app_button.shortcut = Shortcut.new()
+	
+	play_pause_button.shortcut.events = InputMap.action_get_events("play_pause")
+	stop_button.shortcut.events = InputMap.action_get_events("stop")
+	show_clock_button.shortcut.events = InputMap.action_get_events("show_clock")
+	minimize_app_button.shortcut.events = InputMap.action_get_events("minimize_app")
 
 
 func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed("scale_up", true):
+		settings_panel.scale_up()
+	if Input.is_action_just_pressed("scale_down", true):
+		settings_panel.scale_down()
+	
 	if current_task.is_started:
 		tick_current_task(false)
 	if current_task.start_datetime != "":
@@ -45,6 +102,98 @@ func _process(_delta: float) -> void:
 		task_timer.display_time_seconds(current_task.time_elapsed / 1000)
 
 
+func save_settings_data() -> void:
+	var file = FileAccess.open(settings_file_path, FileAccess.WRITE)
+	if file == null:
+		printerr("@main.gd : save_settings_data() - FileAcces open error: ", error_string(FileAccess.get_open_error()))
+		return
+	var save_data: Dictionary = settings_data.to_json()
+	file.store_string(JSON.stringify(save_data, "\t"))
+	file.close()
+
+
+func load_settings_data() -> void:
+	if !FileAccess.file_exists(settings_file_path):
+		printerr("@main.gd : load_settings_data() - Settings file not found! %s" % [settings_file_path])
+		return
+	
+	var file = FileAccess.open(settings_file_path, FileAccess.READ)
+	if file == null:
+		printerr("@main.gd : load_settings_data() - FileAcces open error: ", error_string(FileAccess.get_open_error()))
+		return
+	
+	var content = file.get_as_text()
+	file.close()
+	var data = JSON.parse_string(content)
+	
+	if data == null:
+		printerr("@main.gd : load_settings_data() - Can't parse json string!")
+		return
+	
+	settings_data.load_from_dictionary(data)
+	apply_settings_data()
+
+
+func save_current_project_file() -> void:
+	var path: String = settings_data.get_current_project_path()
+	if path == "":
+		printerr("@main.gd : save_current_project_file() - Empty file path stored in SettingData")
+		return
+	#if !FileAccess.file_exists(path):
+		#printerr("@main.gd : save_current_project_file() - Project file not found! %s" % [path])
+	
+	var file = FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		printerr("@main.gd : save_current_project_file() - FileAcces open error: %s %s" % [error_string(FileAccess.get_open_error()), path])
+		return
+	var save_data: Dictionary
+	save_data["ProjectName"] = entry_list.project_name.text
+	save_data["Entries"] = entry_list.all_entries_to_json()
+	file.store_string(JSON.stringify(save_data, "\t"))
+	file.close()
+
+
+func load_current_project_file() -> void:
+	var path: String = settings_data.get_current_project_path()
+	if path == "":
+		printerr("@main.gd : load_current_project_file() - Empty file path stored in SettingData")
+		return
+	if !FileAccess.file_exists(path):
+		#printerr("@main.gd : load_current_project_file - File not found! %s" % [path])
+		save_current_project_file()
+		return
+	var file = FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		printerr("@main.gd : load_current_project_file() - FileAcces open error: ", error_string(FileAccess.get_open_error()))
+		return
+	var content = file.get_as_text()
+	file.close()
+	var data = JSON.parse_string(content)
+	if data == null:
+		printerr("@main.gd : load_current_project_file() - Can't parse json string!")
+		return
+	entry_list.populate_entries_from_dict(data)
+
+
+func apply_settings_data() -> void:
+	DisplayServer.window_set_current_screen(settings_data.screen_id)
+	task_timer.set_digit_color(settings_data.digit_color, settings_data.show_unlit_segments)
+	task_timer.set_background_color(settings_data.background_color)
+	task_timer.toggle_dots(true)
+	timer_and_buttons.set_timer_scale(settings_data.timer_scale)
+	timer_and_buttons.position = settings_data.timer_position
+	timer_and_buttons.reposition_timer(false)
+	timer_and_buttons.find_quadrant_and_reorder()
+	set_always_on_top(settings_data.always_on_top)
+	system_tray.set_always_on_top_checked(settings_data.always_on_top)
+	# Visible settings
+	settings_panel.set_picked_scale(settings_data.timer_scale)
+	settings_panel.set_digit_color(settings_data.digit_color)
+	settings_panel.set_background_color(settings_data.background_color)
+	settings_panel.set_unlit_checkbox_pressed(settings_data.show_unlit_segments)
+	settings_panel.set_always_on_top_checkbox_pressed(settings_data.always_on_top)
+
+
 func tick_current_task(break_time: bool = false) -> void:
 	var current: int = Time.get_ticks_msec()
 	var delta = current - current_task.last_tick_ms
@@ -55,22 +204,21 @@ func tick_current_task(break_time: bool = false) -> void:
 		current_task.time_elapsed += delta
 
 
-func record_current_task() -> void:
+func record_current_task() -> bool:
+	if current_task.start_datetime == "":
+		return false
+	if current_task.end_datetime == "":
+		current_task.end_datetime = Time.get_datetime_string_from_system(false, true)
 	entry_list.new_entry_from_task(current_task)
+	return true
 
 
 func save_all() -> void:
-	save_settings()
-	record_current_task()
-	save_current_project()
-
-
-func save_settings() -> void:
-	pass
-
-
-func save_current_project() -> void:
-	pass
+	save_settings_data()
+	var entry_created: bool = record_current_task()
+	save_current_project_file()
+	if entry_created:
+		entry_list.erase_latest_entry()
 
 
 func resize_to_screen() -> void:
@@ -101,16 +249,17 @@ func set_mouse_passtrough() -> void:
 		x_values.append(p.x)
 		y_values.append(p.y)
 	
-	var min_x: float = x_values.min() - 8.0
-	var max_x: float = x_values.max() + 8.0
-	var min_y: float = y_values.min() - 8.0
-	var max_y: float = y_values.max() + 8.0
-	
+	var min_x: float = x_values.min()
+	var max_x: float = x_values.max()
+	var min_y: float = y_values.min()
+	var max_y: float = y_values.max()
+	var margin: float = 16.0
 	polygon.clear()
-	polygon.append(Vector2(min_x, min_y))
-	polygon.append(Vector2(max_x, min_y))
-	polygon.append(Vector2(max_x, max_y))
-	polygon.append(Vector2(min_x, max_y))
+	polygon.append(Vector2(min_x - margin, min_y - margin))
+	polygon.append(Vector2(max_x + margin, min_y - margin))
+	polygon.append(Vector2(max_x + margin, max_y + margin))
+	polygon.append(Vector2(min_x - margin, max_y + margin))
+	
 	get_window().mouse_passthrough_polygon = polygon
 
 
@@ -187,7 +336,15 @@ func _on_play_pause_button_toggled(toggled_on: bool) -> void:
 			current_task.end_datetime = Time.get_datetime_string_from_system(false, true)
 
 
+func _on_always_on_top_toggled(toggled_on: bool) -> void:
+	settings_data.always_on_top = toggled_on
+	set_always_on_top(toggled_on)
+	system_tray.set_always_on_top_checked(toggled_on)
+
+
 func _on_stop_button_pressed() -> void:
+	if current_task.start_datetime == "":
+		return
 	current_task.is_started = false
 	current_task.end_datetime = Time.get_datetime_string_from_system(false, true)
 	record_current_task()
@@ -202,11 +359,13 @@ func _on_show_clock_button_toggled(toggled_on: bool) -> void:
 
 func _on_show_list_button_toggled(toggled_on: bool) -> void:
 	entry_list.visible = toggled_on
+	set_panel_positions()
 	set_mouse_passtrough()
 
 
 func _on_show_settings_button_toggled(toggled_on: bool) -> void:
 	settings_panel.visible = toggled_on
+	set_panel_positions()
 	set_mouse_passtrough()
 
 
@@ -220,14 +379,27 @@ func _on_exit_app_button_pressed() -> void:
 
 
 func _on_timer_show_buttons() -> void:
+	var set_passtrough: bool = false
+	var set_panels: bool = false
+	
 	if !buttons_h_box.visible or !buttons_v_box.visible:
 		buttons_h_box.visible = true
 		buttons_v_box.visible = true
+		set_passtrough = true
 		timer_and_buttons.reposition_timer(true)
-	settings_panel.visible = show_settings_button.is_pressed()
-	entry_list.visible = show_list_button.is_pressed()
-	set_panel_positions()
-	set_mouse_passtrough()
+	if show_settings_button.is_pressed() and !settings_panel.is_visible():
+		settings_panel.visible = true
+		set_panels = true
+		set_passtrough = true
+	if show_list_button.is_pressed() and !entry_list.is_visible():
+		entry_list.visible = true
+		set_panels = true
+		set_passtrough = true
+	
+	if set_panels:
+		set_panel_positions()
+	if set_passtrough:
+		set_mouse_passtrough()
 
 
 func _on_timer_hide_buttons() -> void:
@@ -241,9 +413,51 @@ func _on_timer_hide_buttons() -> void:
 
 
 func _on_draggable_position_changed() -> void:
+	settings_data.timer_position = timer_and_buttons.position
+	settings_data.screen_id = DisplayServer.window_get_current_screen()
 	set_panel_positions()
 	set_mouse_passtrough()
 
 
 func _on_settings_color_picker_toggled() -> void:
 	set_mouse_passtrough()
+
+
+func _on_hover_timer_timeout() -> void:
+	_on_timer_hide_buttons()
+
+
+## _on_mouse_entered() and _on_mouse_exited() aren't reliable with transparent windows
+func _on_gui_input(_event: InputEvent) -> void:
+	_on_timer_show_buttons()
+	hover_timer.start()
+
+
+func _on_text_changed(_new: String) -> void:
+	hover_timer.start()
+
+
+func _on_autosave_timer_timeout() -> void:
+	save_all()
+
+
+func _on_minimize_app_button_pressed() -> void:
+	minimize_app_button.set_focus_mode(Control.FOCUS_NONE)
+	minimize_window()
+
+
+func _on_system_tray_menu(id: int) -> void:
+	match id:
+		0:
+			_on_minimize_app_button_pressed()
+		1:
+			settings_data.always_on_top = !settings_data.always_on_top
+			settings_panel.set_always_on_top_checkbox_pressed(settings_data.always_on_top)
+			set_always_on_top(settings_data.always_on_top)
+			system_tray.set_always_on_top_checked(settings_data.always_on_top)
+		2:
+			_on_exit_app_button_pressed()
+
+
+func _on_status_indicator_pressed(_mouse_button: int, _mouse_position: Vector2i) -> void:
+	maximize_window()

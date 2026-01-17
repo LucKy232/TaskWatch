@@ -3,8 +3,12 @@
 [ext_resource type="Script" uid="uid://bo5cb2eqb2c4d" path="res://Scripts/entry.gd" id="1_xsdkm"]
 [ext_resource type="Texture2D" uid="uid://c5cerpl8isdkx" path="res://Icons/CloseButton.svg" id="2_oodbi"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_oodbi"]
+font_size = 12
+
 [node name="Entry" type="Control" unique_id=236321926]
-custom_minimum_size = Vector2(320, 80)
+clip_contents = true
+custom_minimum_size = Vector2(310, 71)
 layout_mode = 3
 anchors_preset = 0
 mouse_filter = 1
@@ -43,11 +47,12 @@ layout_mode = 2
 size_flags_horizontal = 0
 text = "Description"
 
-[node name="DurationLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=2098806935]
-unique_name_in_owner = true
+[node name="EraseButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=114667475]
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_horizontal = 10
-text = "Duration"
+tooltip_text = "Delete Entry"
+icon = ExtResource("2_oodbi")
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=818511337]
 layout_mode = 2
@@ -56,29 +61,30 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 text = "Start DateTime"
+label_settings = SubResource("LabelSettings_oodbi")
 
-[node name="BreakDuration" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1936633148]
+[node name="EndDateTime" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1887315642]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
-text = "Start DateTime"
+text = "End DateTime"
+label_settings = SubResource("LabelSettings_oodbi")
 
-[node name="EndDateTime" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1887315642]
+[node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=2091411966]
+layout_mode = 2
+
+[node name="DurationLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer3" unique_id=2098806935]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 2
-text = "End DateTime"
+size_flags_horizontal = 0
+text = "Duration"
+label_settings = SubResource("LabelSettings_oodbi")
 
-[node name="EraseButton" type="Button" parent="." unique_id=114667475]
-custom_minimum_size = Vector2(16, 16)
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -8.0
-offset_right = 8.0
-offset_bottom = 16.0
-grow_horizontal = 2
-icon = ExtResource("2_oodbi")
+[node name="BreakDuration" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer3" unique_id=1936633148]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Break Duration"
+label_settings = SubResource("LabelSettings_oodbi")
 
-[connection signal="pressed" from="EraseButton" to="." method="_on_erase_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/EraseButton" to="." method="_on_erase_button_pressed"]

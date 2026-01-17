@@ -4,14 +4,9 @@ class_name TaskTimer extends Control
 ## 2, 3 MM
 ## 4, 5 SS
 @export var segments: Array[ColorRect]
-@onready var hover_timer: Timer = $HoverTimer
 @onready var h_box_container: HBoxContainer = $HBoxContainer
 @onready var dots_1: ColorRect = $HBoxContainer/Dots1
 @onready var dots_2: ColorRect = $HBoxContainer/Dots2
-
-signal show_buttons
-signal hide_buttons
-
 
 ## bits toggles the segments in the shader, by bitwise operations, index corresponds to digit displayed
 var bits: Array[int] = [
@@ -34,6 +29,9 @@ var display_value: float = 0.0:
 func _ready() -> void:
 	for segment in segments:
 		segment.material = segment.material.duplicate()
+	dots_2.material = dots_1.material.duplicate()
+	dots_1.material.set_shader_parameter("lit", true)
+	dots_2.material.set_shader_parameter("lit", true)
 
 
 func set_digit_color(color: Color, show_unlit: bool = true) -> void:
@@ -45,11 +43,13 @@ func set_digit_color(color: Color, show_unlit: bool = true) -> void:
 		s.material.set_shader_parameter("unlit_color", unlit_color)
 	dots_1.material.set_shader_parameter("digit_color", color)
 	dots_1.material.set_shader_parameter("unlit_color", unlit_color)
+	dots_2.material.set_shader_parameter("digit_color", color)
+	dots_2.material.set_shader_parameter("unlit_color", unlit_color)
 	toggle_dots(true)
 
 
 func toggle_dots(toggled_on: bool) -> void:
-	dots_1.material.set_shader_parameter("lit", toggled_on)
+	dots_2.material.set_shader_parameter("lit", toggled_on)
 
 
 func set_background_color(color: Color) -> void:
@@ -115,16 +115,3 @@ func display_number(number: float, decimals: int) -> void:
 		var bitmask: int = bits[digit]
 		segments[segment].material.set_shader_parameter("bitmask", bitmask)
 		segment += 1
-
-
-func _on_mouse_entered() -> void:
-	hover_timer.stop()
-	show_buttons.emit()
-
-
-func _on_mouse_exited() -> void:
-	hover_timer.start()
-
-
-func _on_hover_timer_timeout() -> void:
-	hide_buttons.emit()

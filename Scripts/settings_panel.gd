@@ -3,7 +3,8 @@ class_name SettingsPanel extends Control
 @onready var color_picker_button: ColorPickerButton = %ColorPickerButton
 @onready var bg_color_picker_button: ColorPickerButton = %BGColorPickerButton
 @onready var scale_option_button: OptionButton = %ScaleOptionButton
-#@onready var unlit_segments_checkbox: CheckBox = %UnlitSegmentsCheckbox
+@onready var unlit_segments_checkbox: CheckBox = %UnlitSegmentsCheckbox
+@onready var always_on_top_checkbox: CheckBox = %AlwaysOnTopCheckbox
 
 var popup_1: PopupPanel
 var popup_2: PopupPanel
@@ -28,6 +29,7 @@ signal color_changed
 signal bg_color_changed
 signal scale_changed
 signal unlit_segments_toggled
+signal always_on_top_toggled
 signal color_picker_toggled
 
 func _ready() -> void:
@@ -39,8 +41,40 @@ func _ready() -> void:
 	popup_3.visibility_changed.connect(_on_color_picker_popup)
 
 
-func _on_color_picker_popup() -> void:
-	color_picker_toggled.emit()
+func set_digit_color(c: Color) -> void:
+	color_picker_button.color = c
+
+
+func set_background_color(c: Color) -> void:
+	bg_color_picker_button.color = c
+
+
+func set_unlit_checkbox_pressed(toggled_on: bool) -> void:
+	unlit_segments_checkbox.set_pressed_no_signal(toggled_on)
+
+
+func set_always_on_top_checkbox_pressed(toggled_on: bool) -> void:
+	always_on_top_checkbox.set_pressed_no_signal(toggled_on)
+
+
+func set_picked_scale(s: float) -> void:
+	for i in scale_dict:
+		if scale_dict[i] == s:
+			scale_option_button.selected = i
+
+
+func scale_up() -> void:
+	var id: int = scale_option_button.get_selected_id()
+	id = clampi(id + 1, 0, scale_option_button.item_count - 1)
+	scale_option_button.select(id)
+	_on_scale_option_button_item_selected(id)
+
+
+func scale_down() -> void:
+	var id: int = scale_option_button.get_selected_id()
+	id = clampi(id - 1, 0, scale_option_button.item_count - 1)
+	scale_option_button.select(id)
+	_on_scale_option_button_item_selected(id)
 
 
 func get_color_picker_passtrough() -> PackedVector2Array:
@@ -74,6 +108,10 @@ func get_option_button_passtrough() -> PackedVector2Array:
 	return corners
 
 
+func _on_color_picker_popup() -> void:
+	color_picker_toggled.emit()
+
+
 func _on_color_picker_button_color_changed(color: Color) -> void:
 	picked_color = color
 
@@ -97,3 +135,7 @@ func _on_scale_option_button_item_selected(index: int) -> void:
 
 func _on_unlit_segments_checkbox_toggled(toggled_on: bool) -> void:
 	unlit_segments_toggled.emit(toggled_on)
+
+
+func _on_always_on_top_checkbox_toggled(toggled_on: bool) -> void:
+	always_on_top_toggled.emit(toggled_on)

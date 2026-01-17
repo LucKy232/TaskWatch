@@ -79,7 +79,7 @@ func find_quadrant_and_reorder() -> void:
 
 
 func reposition_timer(toggled_on: bool) -> void:
-	var extra: float = floor(4.0 * scale.x)
+	var extra: float = ceil(4.0 * scale.x)
 	var offset_x: float = buttons_v_box.size.x * scale.x + extra if side_horizontal == SideH.RIGHT else 0.0
 	var offset_y: float = buttons_h_box.size.y * scale.y + extra if side_vertical == SideV.BOTTOM else 0.0
 	position += -Vector2(offset_x, offset_y) if toggled_on else Vector2(offset_x, offset_y)

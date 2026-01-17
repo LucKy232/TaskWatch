@@ -5,6 +5,7 @@ class_name EntryList extends Control
 @onready var project_name: LineEdit = %ProjectName
 @onready var entries_container: VBoxContainer = %EntriesContainer
 var entries: Dictionary[int, Entry]
+var latest_entry_id: int
 
 signal project_name_changed
 
@@ -16,13 +17,15 @@ func new_entry() -> int:
 	new.id = eid
 	new.erase_entry.connect(_on_entry_erased)
 	entries[eid] = new
+	latest_entry_id = eid
 	return eid
 
 
 func populate_entries_from_dict(dict: Dictionary) -> void:
-	for e in dict:
+	project_name.text = dict["ProjectName"]
+	for e in dict["Entries"]:
 		var eid: int = new_entry()
-		entries[eid].set_data_from_json(dict[e])
+		entries[eid].set_data_from_json(dict["Entries"][e])
 
 
 func new_entry_from_task(task: Task) -> void:
@@ -50,7 +53,15 @@ func all_entries_to_json() -> Dictionary:
 	return dict
 
 
+func erase_latest_entry() -> void:
+	_on_entry_erased(latest_entry_id)
+	latest_entry_id = -1
+
+
 func _on_entry_erased(id: int) -> void:
+	if !entries.has(id):
+		print("No id")
+		return
 	entries[id].queue_free()
 	entries.erase(id)
 
