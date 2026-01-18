@@ -1,0 +1,2 @@
+Montserrat Bold Font - license: SIL Open Font License (OFL)
+link: https://www.fontspace.com/montserrat-font-f16544
