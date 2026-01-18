@@ -10,6 +10,15 @@ offset_right = 200.0
 offset_bottom = 150.0
 script = ExtResource("1_8hrck")
 
+[node name="VersionNumber" type="Label" parent="." unique_id=1101525206]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 1.0
+offset_right = 49.0
+offset_bottom = 22.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.24313726)
+text = "v0.92"
+
 [node name="Background" type="Panel" parent="." unique_id=1536580708]
 layout_mode = 1
 anchors_preset = 15

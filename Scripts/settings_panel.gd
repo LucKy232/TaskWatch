@@ -5,6 +5,7 @@ class_name SettingsPanel extends Control
 @onready var scale_option_button: OptionButton = %ScaleOptionButton
 @onready var unlit_segments_checkbox: CheckBox = %UnlitSegmentsCheckbox
 @onready var always_on_top_checkbox: CheckBox = %AlwaysOnTopCheckbox
+@onready var version_number: Label = $VersionNumber
 
 var popup_1: PopupPanel
 var popup_2: PopupPanel
@@ -39,6 +40,8 @@ func _ready() -> void:
 	popup_1.visibility_changed.connect(_on_color_picker_popup)
 	popup_2.visibility_changed.connect(_on_color_picker_popup)
 	popup_3.visibility_changed.connect(_on_color_picker_popup)
+	var app_version: String = ProjectSettings.get_setting("application/config/version")
+	version_number.text = ("v%s" % app_version)
 
 
 func set_digit_color(c: Color) -> void:
