@@ -22,7 +22,6 @@ const MAIN_THEME = preload("uid://dirmfsg7xnbxr")
 
 var settings_data: SettingsData = SettingsData.new()
 var current_task: Task = Task.new(0)
-var show_clock: bool = false
 
 
 func _ready() -> void:
@@ -62,13 +61,51 @@ func _ready() -> void:
 		load_current_project_file()
 
 
+func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed("scale_up", true):
+		settings_panel.scale_up()
+	if Input.is_action_just_pressed("scale_down", true):
+		settings_panel.scale_down()
+	
+	if current_task.is_started:
+		tick_current_task(false)
+	if current_task.start_datetime != "":
+		tick_current_task(true)
+	
+	if settings_data.show_clock:
+		var current_time: Dictionary = Time.get_time_dict_from_system()
+		task_timer.display_time(current_time["hour"], current_time["minute"], current_time["second"])
+	else:
+		task_timer.display_time_seconds(current_task.time_elapsed / 1000)
+	
+	var screen_id: int = DisplayServer.window_get_current_screen()
+	if settings_data.screen_id != screen_id:
+		settings_data.screen_id = screen_id
+		change_screen(screen_id)
+
+
+func change_screen(screen_number: int) -> void:
+	if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_MAXIMIZED:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		DisplayServer.window_set_current_screen(screen_number)
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MAXIMIZED)
+	else:
+		DisplayServer.window_set_current_screen(screen_number)
+	timer_and_buttons.position = timer_and_buttons.pan_limits(timer_and_buttons.position)
+	_on_draggable_position_changed()
+
+
+func resize_to_screen() -> void:
+	get_window().mode = Window.Mode.MODE_MAXIMIZED
+
+
 func minimize_window() -> void:
-	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, true)
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, false)
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MINIMIZED)
 
 
 func maximize_window() -> void:
-	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, false)
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, true)
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MAXIMIZED)
 
 
@@ -84,24 +121,6 @@ func set_button_shortcut_events() -> void:
 	show_clock_button.shortcut.events = InputMap.action_get_events("show_clock")
 	minimize_app_button.shortcut.events = InputMap.action_get_events("minimize_app")
 	show_list_button.shortcut.events = InputMap.action_get_events("show_list")
-
-
-func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed("scale_up", true):
-		settings_panel.scale_up()
-	if Input.is_action_just_pressed("scale_down", true):
-		settings_panel.scale_down()
-	
-	if current_task.is_started:
-		tick_current_task(false)
-	if current_task.start_datetime != "":
-		tick_current_task(true)
-	
-	if show_clock:
-		var current_time: Dictionary = Time.get_time_dict_from_system()
-		task_timer.display_time(current_time["hour"], current_time["minute"], current_time["second"])
-	else:
-		task_timer.display_time_seconds(current_task.time_elapsed / 1000)
 
 
 func save_settings_data() -> void:
@@ -195,6 +214,7 @@ func apply_settings_data() -> void:
 	settings_panel.set_background_color(settings_data.background_color)
 	settings_panel.set_unlit_checkbox_pressed(settings_data.show_unlit_segments)
 	settings_panel.set_always_on_top_checkbox_pressed(settings_data.always_on_top)
+	show_clock_button.set_pressed_no_signal(settings_data.show_clock)
 
 
 func set_theme_color(c: Color) -> void:
@@ -234,10 +254,6 @@ func save_all() -> void:
 	save_current_project_file()
 	if entry_created:
 		entry_list.erase_latest_entry()
-
-
-func resize_to_screen() -> void:
-	get_window().mode = Window.Mode.MODE_MAXIMIZED
 
 
 func set_always_on_top(toggled_on: bool) -> void:
@@ -377,7 +393,7 @@ func _on_stop_button_pressed() -> void:
 
 
 func _on_show_clock_button_toggled(toggled_on: bool) -> void:
-	show_clock = toggled_on
+	settings_data.show_clock = toggled_on
 
 
 func _on_show_list_button_toggled(toggled_on: bool) -> void:
@@ -437,7 +453,6 @@ func _on_timer_hide_buttons() -> void:
 
 func _on_draggable_position_changed() -> void:
 	settings_data.timer_position = timer_and_buttons.position
-	settings_data.screen_id = DisplayServer.window_get_current_screen()
 	set_panel_positions()
 	set_mouse_passtrough()
 
@@ -479,6 +494,9 @@ func _on_system_tray_menu(id: int) -> void:
 			set_always_on_top(settings_data.always_on_top)
 			system_tray.set_always_on_top_checked(settings_data.always_on_top)
 		2:
+			timer_and_buttons.position = timer_and_buttons.pan_limits(Vector2.ZERO)
+			_on_draggable_position_changed()
+		3:
 			_on_exit_app_button_pressed()
 
 

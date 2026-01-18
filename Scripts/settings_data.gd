@@ -2,6 +2,7 @@ class_name SettingsData
 
 var digit_color: Color = Color.DARK_RED
 var background_color: Color = Color.TRANSPARENT
+var show_clock: bool = false
 var show_unlit_segments: bool = true
 var always_on_top: bool = true
 var timer_scale: float = 1.0
@@ -19,6 +20,8 @@ func get_current_project_path() -> String:
 
 
 func load_from_dictionary(dict) -> void:
+	if dict.has("show_clock"):
+		show_clock = bool(dict["show_clock"])
 	digit_color = Color(dict["color.r"], dict["color.g"], dict["color.b"], dict["color.a"])
 	background_color = Color(dict["background_color.r"], dict["background_color.g"], dict["background_color.b"], dict["background_color.a"])
 	show_unlit_segments = bool(dict["show_unlit_segments"])
@@ -40,6 +43,7 @@ func to_json() -> Dictionary:
 	dict["background_color.g"] = background_color.g
 	dict["background_color.b"] = background_color.b
 	dict["background_color.a"] = background_color.a
+	dict["show_clock"] = show_clock
 	dict["show_unlit_segments"] = show_unlit_segments
 	dict["timer_scale"] = timer_scale
 	dict["timer_position_x"] = timer_position.x

@@ -18,8 +18,9 @@ func _ready() -> void:
 	menu.add_item("Minimize", 0)
 	menu.add_check_item("Always on top", 1)
 	menu.set_item_checked(1, true)
+	menu.add_item("Reset Position", 2)
 	menu.add_separator()
-	menu.add_item("Exit", 2)
+	menu.add_item("Exit", 3)
 	menu.id_pressed.connect(_on_system_tray_menu_pressed)
 	status_indicator.menu = menu.get_path()
 

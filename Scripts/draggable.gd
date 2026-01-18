@@ -98,5 +98,5 @@ func pan_limits(pos: Vector2) -> Vector2:
 		pos.y = 0.0
 	elif pos.y + size_scale.y > window.y:
 		pos.y = window.y - size_scale.y
-	#printt(window, pos) 	# NOTE window size may change every frame 1038 - 1040
+	#printt(window, pos) 	# NOTE window size.y may change every frame by 2 px 1038 - 1040 until minimized
 	return pos
