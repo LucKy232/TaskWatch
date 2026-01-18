@@ -14,7 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://d172ayshc1gb8" path="res://Scenes/entry_list.tscn" id="9_efxa6"]
 [ext_resource type="Texture2D" uid="uid://byllhofhpqkfs" path="res://Icons/MinimizeButton.svg" id="10_ycdy4"]
 [ext_resource type="Script" uid="uid://chlge7jq1sodk" path="res://Scripts/system_tray.gd" id="14_w48qg"]
-[ext_resource type="Texture2D" uid="uid://8ll26e8wxmhm" path="res://icon.png" id="15_vivmo"]
+[ext_resource type="Texture2D" uid="uid://1f0gp20mi1ip" path="res://icon.png" id="15_vivmo"]
 
 [node name="Main" type="Control" unique_id=1237992629]
 layout_mode = 3
@@ -105,13 +105,13 @@ icon = ExtResource("7_4c57u")
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
-tooltip_text = "Exit App"
+tooltip_text = "Minimize"
 icon = ExtResource("10_ycdy4")
 
 [node name="ExitAppButton" type="Button" parent="TimerAndButtons/ButtonsHBox" unique_id=1371751418]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
-tooltip_text = "Exit App"
+tooltip_text = "Exit"
 icon = ExtResource("9_dg77c")
 
 [node name="SettingsPanel" parent="." unique_id=1190921543 instance=ExtResource("2_0xm2m")]

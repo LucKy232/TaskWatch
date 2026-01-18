@@ -21,9 +21,6 @@ var bits: Array[int] = [
 	0b1111111,	# 8
 	0b1111011,	# 9
 ]
-var display_value: float = 0.0:
-	set(value):
-		display_number(value, 2)
 
 
 func _ready() -> void:
@@ -36,7 +33,7 @@ func _ready() -> void:
 
 func set_digit_color(color: Color, show_unlit: bool = true) -> void:
 	var unlit_color: Color = color
-	unlit_color.a = 0.1 if show_unlit else 0.0
+	unlit_color.a = 0.12 * color.a if show_unlit else 0.0
 	
 	for s in segments:
 		s.material.set_shader_parameter("digit_color", color)
@@ -54,10 +51,6 @@ func toggle_dots(toggled_on: bool) -> void:
 
 func set_background_color(color: Color) -> void:
 	get_theme_stylebox("panel").bg_color = color
-
-
-func set_display_value(number: float) -> void:
-	display_value = number
 
 
 func display_time(hour: int, minute: int, second: int) -> void:

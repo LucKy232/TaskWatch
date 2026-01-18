@@ -79,10 +79,11 @@ func find_quadrant_and_reorder() -> void:
 
 
 func reposition_timer(toggled_on: bool) -> void:
-	var extra: float = ceil(4.0 * scale.x)
+	var extra: float = 4.0 * scale.x
 	var offset_x: float = buttons_v_box.size.x * scale.x + extra if side_horizontal == SideH.RIGHT else 0.0
 	var offset_y: float = buttons_h_box.size.y * scale.y + extra if side_vertical == SideV.BOTTOM else 0.0
-	position += -Vector2(offset_x, offset_y) if toggled_on else Vector2(offset_x, offset_y)
+	var move: Vector2 = -Vector2(offset_x, offset_y) if toggled_on else Vector2(offset_x, offset_y)
+	position += move
 	position_changed.emit()
 
 
@@ -97,4 +98,5 @@ func pan_limits(pos: Vector2) -> Vector2:
 		pos.y = 0.0
 	elif pos.y + size_scale.y > window.y:
 		pos.y = window.y - size_scale.y
+	#printt(window, pos) 	# NOTE window size may change every frame 1038 - 1040
 	return pos

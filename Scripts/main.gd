@@ -1,5 +1,6 @@
 class_name Main extends Control
 
+const MAIN_THEME = preload("uid://dirmfsg7xnbxr")
 @export var settings_file_path: String = "user://settings_data.json"
 @export var play_icon: CompressedTexture2D
 @export var pause_icon: CompressedTexture2D
@@ -19,14 +20,13 @@ class_name Main extends Control
 @onready var hover_timer: Timer = $HoverTimer
 @onready var system_tray: SystemTray = $SystemTray
 
-#var project_data: ProjectData
-
 var settings_data: SettingsData = SettingsData.new()
 var current_task: Task = Task.new(0)
 var show_clock: bool = false
 
 
 func _ready() -> void:
+	get_tree().set_auto_accept_quit(false)
 	call_deferred("resize_to_screen")
 	call_deferred("set_mouse_passtrough")
 	settings_panel.color_changed.connect(_on_digit_color_changed)
@@ -77,11 +77,13 @@ func set_button_shortcut_events() -> void:
 	stop_button.shortcut = Shortcut.new()
 	show_clock_button.shortcut = Shortcut.new()
 	minimize_app_button.shortcut = Shortcut.new()
+	show_list_button.shortcut = Shortcut.new()
 	
 	play_pause_button.shortcut.events = InputMap.action_get_events("play_pause")
 	stop_button.shortcut.events = InputMap.action_get_events("stop")
 	show_clock_button.shortcut.events = InputMap.action_get_events("show_clock")
 	minimize_app_button.shortcut.events = InputMap.action_get_events("minimize_app")
+	show_list_button.shortcut.events = InputMap.action_get_events("show_list")
 
 
 func _process(_delta: float) -> void:
@@ -177,6 +179,7 @@ func load_current_project_file() -> void:
 
 func apply_settings_data() -> void:
 	DisplayServer.window_set_current_screen(settings_data.screen_id)
+	set_theme_color(settings_data.digit_color)
 	task_timer.set_digit_color(settings_data.digit_color, settings_data.show_unlit_segments)
 	task_timer.set_background_color(settings_data.background_color)
 	task_timer.toggle_dots(true)
@@ -192,6 +195,18 @@ func apply_settings_data() -> void:
 	settings_panel.set_background_color(settings_data.background_color)
 	settings_panel.set_unlit_checkbox_pressed(settings_data.show_unlit_segments)
 	settings_panel.set_always_on_top_checkbox_pressed(settings_data.always_on_top)
+
+
+func set_theme_color(c: Color) -> void:
+	MAIN_THEME.get_stylebox("normal", "Button").border_color = c
+	MAIN_THEME.get_stylebox("focus", "Button").border_color = c
+	MAIN_THEME.get_stylebox("hover", "Button").border_color = c
+	MAIN_THEME.get_stylebox("hover_pressed", "Button").border_color = c
+	MAIN_THEME.get_stylebox("pressed", "Button").border_color = c
+	MAIN_THEME.get_stylebox("normal", "LineEdit").border_color = c
+	MAIN_THEME.get_stylebox("panel", "Panel").border_color = c
+	MAIN_THEME.get_stylebox("panel", "PanelContainer").border_color = c
+	MAIN_THEME.set_color("checkbox_checked_color", "CheckBox", c)
 
 
 func tick_current_task(break_time: bool = false) -> void:
@@ -253,7 +268,7 @@ func set_mouse_passtrough() -> void:
 	var max_x: float = x_values.max()
 	var min_y: float = y_values.min()
 	var max_y: float = y_values.max()
-	var margin: float = 16.0
+	var margin: float = 8.0
 	polygon.clear()
 	polygon.append(Vector2(min_x - margin, min_y - margin))
 	polygon.append(Vector2(max_x + margin, min_y - margin))
@@ -300,6 +315,13 @@ func set_panel_positions() -> void:
 							+ timer_size.y * (1.0 - top))
 
 
+# Replace quit behaviour with save file + quit
+func _notification(what):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		_on_exit_app_button_pressed()
+		#get_tree().quit() # default behavior
+
+
 func _on_scale_changed(s: float) -> void:
 	settings_data.timer_scale = s
 	timer_and_buttons.set_timer_scale(s)
@@ -309,6 +331,7 @@ func _on_scale_changed(s: float) -> void:
 func _on_digit_color_changed(c: Color) -> void:
 	settings_data.digit_color = c
 	task_timer.set_digit_color(c, settings_data.show_unlit_segments)
+	set_theme_color(c)
 
 
 func _on_background_color_changed(c: Color) -> void:
