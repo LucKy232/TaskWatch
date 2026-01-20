@@ -48,7 +48,7 @@ theme_override_constants/separation = 4
 
 [node name="PlayPauseButton" type="Button" parent="TimerAndButtons/TimerAndSideButtons/ButtonsVBox" unique_id=720547510]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 32)
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 tooltip_text = "Start / Pause"
 toggle_mode = true
@@ -56,13 +56,14 @@ icon = ExtResource("2_7mycd")
 
 [node name="StopButton" type="Button" parent="TimerAndButtons/TimerAndSideButtons/ButtonsVBox" unique_id=285193584]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 32)
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 tooltip_text = "Stop Task"
 icon = ExtResource("3_272bh")
 
 [node name="ShowClockButton" type="Button" parent="TimerAndButtons/TimerAndSideButtons/ButtonsVBox" unique_id=419802243]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 tooltip_text = "Show Current Time"
 toggle_mode = true

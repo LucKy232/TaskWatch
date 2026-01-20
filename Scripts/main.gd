@@ -495,6 +495,7 @@ func _on_system_tray_menu(id: int) -> void:
 			system_tray.set_always_on_top_checked(settings_data.always_on_top)
 		2:
 			timer_and_buttons.position = timer_and_buttons.pan_limits(Vector2.ZERO)
+			timer_and_buttons.find_quadrant_and_reorder()
 			_on_draggable_position_changed()
 		3:
 			var screen: int = DisplayServer.window_get_current_screen()
