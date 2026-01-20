@@ -44,13 +44,14 @@ layout_mode = 2
 [node name="Description" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=470353520]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 3
 text = "Description"
+text_overrun_behavior = 3
 
 [node name="EraseButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=114667475]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
-size_flags_horizontal = 10
+size_flags_horizontal = 8
 tooltip_text = "Delete Entry"
 icon = ExtResource("2_oodbi")
 
