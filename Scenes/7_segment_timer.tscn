@@ -15,6 +15,10 @@ corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 corner_detail = 5
+expand_margin_left = 10.0
+expand_margin_top = 10.0
+expand_margin_right = 10.0
+expand_margin_bottom = 10.0
 
 [node name="7SegmentTimer" type="PanelContainer" unique_id=735116144 node_paths=PackedStringArray("segments")]
 offset_right = 560.0

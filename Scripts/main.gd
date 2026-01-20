@@ -497,6 +497,13 @@ func _on_system_tray_menu(id: int) -> void:
 			timer_and_buttons.position = timer_and_buttons.pan_limits(Vector2.ZERO)
 			_on_draggable_position_changed()
 		3:
+			var screen: int = DisplayServer.window_get_current_screen()
+			var count: int = DisplayServer.get_screen_count()
+			screen += 1
+			if screen >= count:
+				screen = 0
+			change_screen(screen)
+		4:
 			_on_exit_app_button_pressed()
 
 
