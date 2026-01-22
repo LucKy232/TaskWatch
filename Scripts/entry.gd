@@ -3,8 +3,8 @@ class_name Entry extends Control
 @onready var description: Label = %Description
 @onready var duration_label: Label = %DurationLabel
 @onready var break_duration_label: Label = %BreakDuration
-@onready var start_date_time: Label = %StartDateTime
-@onready var end_date_time: Label = %EndDateTime
+@onready var start_datetime_label: Label = %StartDateTime
+@onready var end_datetime_label: Label = %EndDateTime
 
 var start_datetime: String = ""
 var end_datetime: String = ""
@@ -31,12 +31,12 @@ func set_description(text: String) -> void:
 
 func set_start_datetime(text: String) -> void:
 	start_datetime = text
-	start_date_time.text = text
+	start_datetime_label.text = text
 
 
 func set_end_datetime(text: String) -> void:
 	end_datetime = text
-	end_date_time.text = text
+	end_datetime_label.text = text
 
 
 func _on_erase_button_pressed() -> void:

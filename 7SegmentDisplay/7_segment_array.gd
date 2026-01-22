@@ -7,6 +7,7 @@ class_name TaskTimer extends Control
 @onready var h_box_container: HBoxContainer = $HBoxContainer
 @onready var dots_1: ColorRect = $HBoxContainer/Dots1
 @onready var dots_2: ColorRect = $HBoxContainer/Dots2
+var state: TimerState = TimerState.STOPPED
 
 ## bits toggles the segments in the shader, by bitwise operations, index corresponds to digit displayed
 var bits: Array[int] = [
@@ -21,6 +22,11 @@ var bits: Array[int] = [
 	0b1111111,	# 8
 	0b1111011,	# 9
 ]
+enum TimerState {
+	STOPPED,
+	PLAYING,
+	PAUSED,
+}
 
 
 func _ready() -> void:
@@ -54,24 +60,30 @@ func set_background_color(color: Color) -> void:
 
 
 func display_time(hour: int, minute: int, second: int) -> void:
+	var ms: int = Time.get_ticks_msec() % 2000	# Animation time
 	hour = clampi(hour, 0, 99)
 	var hour_tens: int = hour / 10
-	var bitmask: int = bits[hour_tens]
-	segments[0].material.set_shader_parameter("bitmask", bitmask)
-	bitmask = bits[hour - hour_tens * 10]
-	segments[1].material.set_shader_parameter("bitmask", bitmask)
-	
 	var minute_tens: int = minute / 10
-	bitmask = bits[minute_tens]
-	segments[2].material.set_shader_parameter("bitmask", bitmask)
-	bitmask = bits[minute - minute_tens * 10]
-	segments[3].material.set_shader_parameter("bitmask", bitmask)
-	
 	var seconds_tens: int = second / 10
-	bitmask = bits[seconds_tens]
-	segments[4].material.set_shader_parameter("bitmask", bitmask)
-	bitmask = bits[second - seconds_tens * 10]
-	segments[5].material.set_shader_parameter("bitmask", bitmask)
+	
+	var bitmask0: int = bits[hour_tens]
+	var bitmask1: int = bits[hour - hour_tens * 10]
+	var bitmask2: int = bits[minute_tens]
+	var bitmask3: int = bits[minute - minute_tens * 10]
+	var bitmask4: int = bits[seconds_tens]
+	var bitmask5: int = bits[second - seconds_tens * 10]
+	if state == TimerState.PLAYING:
+		bitmask5 = bitmask5 | (0b10000000 if (ms < 1000) else 0b00000000)
+	elif state == TimerState.PAUSED:
+		bitmask3 = bitmask3 | (0b10000000 if ms > 333 else 0b00000000)
+		bitmask4 = bitmask4 | (0b10000000 if ms > 666 else 0b00000000)
+		bitmask5 = bitmask5 | (0b10000000 if ms > 1000 else 0b00000000)
+	segments[0].material.set_shader_parameter("bitmask", bitmask0)
+	segments[1].material.set_shader_parameter("bitmask", bitmask1)
+	segments[2].material.set_shader_parameter("bitmask", bitmask2)
+	segments[3].material.set_shader_parameter("bitmask", bitmask3)
+	segments[4].material.set_shader_parameter("bitmask", bitmask4)
+	segments[5].material.set_shader_parameter("bitmask", bitmask5)
 
 
 func display_time_seconds(seconds: int) -> void:

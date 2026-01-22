@@ -17,7 +17,7 @@ offset_top = 1.0
 offset_right = 49.0
 offset_bottom = 22.0
 theme_override_colors/font_color = Color(1, 1, 1, 0.24313726)
-text = "v0.92"
+text = "v0.00"
 
 [node name="Background" type="Panel" parent="." unique_id=1536580708]
 layout_mode = 1

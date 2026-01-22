@@ -69,14 +69,22 @@ func _process(_delta: float) -> void:
 	
 	if current_task.is_started:
 		tick_current_task(false)
-	if current_task.start_datetime != "":
+		task_timer.state = task_timer.TimerState.PLAYING
+	elif current_task.start_datetime != "":
 		tick_current_task(true)
+		task_timer.state = task_timer.TimerState.PAUSED
+	else:
+		task_timer.state = task_timer.TimerState.STOPPED
 	
 	if settings_data.show_clock:
 		var current_time: Dictionary = Time.get_time_dict_from_system()
 		task_timer.display_time(current_time["hour"], current_time["minute"], current_time["second"])
-	else:
+	elif current_task.is_started:
 		task_timer.display_time_seconds(current_task.time_elapsed / 1000)
+	elif current_task.start_datetime != "":
+		task_timer.display_time_seconds(current_task.break_time_elapsed / 1000)
+	else:
+		task_timer.display_time(0, 0, 0)
 	
 	var screen_id: int = DisplayServer.window_get_current_screen()
 	if settings_data.screen_id != screen_id:

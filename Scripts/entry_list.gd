@@ -1,13 +1,52 @@
 class_name EntryList extends Control
 
 @export_file("*.tscn") var entry_scene
-@export_file("*.tscn") var break_time_scene
+@export_file("*.tscn") var day_summary_scene
 @onready var project_name: LineEdit = %ProjectName
 @onready var entries_container: VBoxContainer = %EntriesContainer
 var entries: Dictionary[int, Entry]
+var summaries: Dictionary[String, DaySummary]
 var latest_entry_id: int
 
+var show_summaries: bool = false
 signal project_name_changed
+
+
+# TODO buttons instead
+func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed("toggle_summaries"):
+		show_summaries = !show_summaries
+		for eid in entries:
+			entries[eid].visible = !show_summaries
+		for s in summaries:
+			summaries[s].visible = show_summaries
+	if Input.is_action_just_pressed("build_summaries"):
+		clear_summaries()
+		build_summaries()
+
+
+func clear_summaries() -> void:
+	for d in summaries:
+		summaries[d].queue_free()
+	summaries.clear()
+
+
+# TODO only clear and rebuild today
+func build_summaries() -> void:
+	#var today: String = Time.get_date_string_from_system()
+	for eid in entries:
+		var date: String = entries[eid].start_datetime.split(" ")[0]
+		if !summaries.has(date):
+			var new: DaySummary = load(day_summary_scene).instantiate() as DaySummary
+			entries_container.add_child(new)
+			new.set_date(date)
+			new.add_active_duration(entries[eid].duration)
+			new.add_break_duration(entries[eid].break_duration)
+			new.visible = show_summaries
+			summaries[date] = new
+		else:
+			summaries[date].add_active_duration(entries[eid].duration)
+			summaries[date].add_break_duration(entries[eid].break_duration)
 
 
 func new_entry() -> int:
