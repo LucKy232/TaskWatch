@@ -53,6 +53,7 @@ placeholder_text = "Project name"
 alignment = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/Control/PanelContainer/VBoxContainer" unique_id=1016366333]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
