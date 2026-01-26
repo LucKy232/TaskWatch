@@ -20,6 +20,7 @@ enum ViewMode {
 	DAY_SUMMARY,
 	WEEK_SUMMARY,
 	MONTH_SUMMARY,
+	TOTAL_SUMMARY,
 }
 
 

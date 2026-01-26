@@ -41,10 +41,9 @@ func _ready() -> void:
 	settings_panel.popup_1.window_input.connect(_on_gui_input)
 	settings_panel.popup_2.window_input.connect(_on_gui_input)
 	settings_panel.popup_3.window_input.connect(_on_gui_input)
-	entry_list.project_name.text_changed.connect(_on_text_changed)
-	task_description_line_edit.text_changed.connect(_on_text_changed)
 	system_tray.system_tray_menu_pressed.connect(_on_system_tray_menu)
 	system_tray.status_indicator.pressed.connect(_on_status_indicator_pressed)
+	entry_list.project_name.editing_toggled.connect(_on_line_edit_editing_toggled)
 	
 	set_button_shortcut_events()
 	# Load settings
@@ -450,6 +449,8 @@ func _on_timer_show_buttons() -> void:
 
 
 func _on_timer_hide_buttons() -> void:
+	if get_window().gui_get_focus_owner() is LineEdit and get_window().gui_get_focus_owner().is_editing:
+		return
 	if buttons_h_box.visible or buttons_v_box.visible:
 		buttons_h_box.visible = false
 		buttons_v_box.visible = false
@@ -476,10 +477,6 @@ func _on_hover_timer_timeout() -> void:
 ## _on_mouse_entered() and _on_mouse_exited() aren't reliable with transparent windows
 func _on_gui_input(_event: InputEvent) -> void:
 	_on_timer_show_buttons()
-	hover_timer.start()
-
-
-func _on_text_changed(_new: String) -> void:
 	hover_timer.start()
 
 
@@ -518,3 +515,8 @@ func _on_system_tray_menu(id: int) -> void:
 
 func _on_status_indicator_pressed(_mouse_button: int, _mouse_position: Vector2i) -> void:
 	maximize_window()
+
+
+func _on_line_edit_editing_toggled(toggled_on: bool) -> void:
+	if !toggled_on:
+		play_pause_button.grab_focus(true)

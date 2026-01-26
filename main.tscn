@@ -148,12 +148,14 @@ script = ExtResource("14_w48qg")
 tray_icon = ExtResource("15_vivmo")
 
 [node name="PopupMenu" type="PopupMenu" parent="SystemTray" unique_id=26875357]
+oversampling_override = 1.0
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="gui_input" from="TimerAndButtons" to="TimerAndButtons" method="_on_gui_input"]
 [connection signal="toggled" from="TimerAndButtons/TimerAndSideButtons/ButtonsVBox/PlayPauseButton" to="." method="_on_play_pause_button_toggled"]
 [connection signal="pressed" from="TimerAndButtons/TimerAndSideButtons/ButtonsVBox/StopButton" to="." method="_on_stop_button_pressed"]
 [connection signal="toggled" from="TimerAndButtons/TimerAndSideButtons/ButtonsVBox/ShowClockButton" to="." method="_on_show_clock_button_toggled"]
+[connection signal="editing_toggled" from="TimerAndButtons/ButtonsHBox/TaskDescriptionLineEdit" to="." method="_on_line_edit_editing_toggled"]
 [connection signal="text_changed" from="TimerAndButtons/ButtonsHBox/TaskDescriptionLineEdit" to="." method="_on_task_description_line_edit_text_changed"]
 [connection signal="toggled" from="TimerAndButtons/ButtonsHBox/ShowListButton" to="." method="_on_show_list_button_toggled"]
 [connection signal="toggled" from="TimerAndButtons/ButtonsHBox/ShowSettingsButton" to="." method="_on_show_settings_button_toggled"]
