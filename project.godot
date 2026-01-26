@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="TaskWatch"
-config/version="0.93"
+config/version="0.94"
 run/main_scene="uid://c8nrsvxatuyhd"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 run/max_fps=60
