@@ -20,4 +20,4 @@ func add_break_duration(seconds: int) -> void:
 
 func set_date(text: String) -> void:
 	# TODO week day
-	date.text = text
+	date.text = Formatter.format_day(text)
