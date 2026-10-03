@@ -51,3 +51,24 @@ static func get_fourteen_segment_symbol(symbol: String, decimal_point: bool = fa
 		return 0
 	var bits: int = fourteen_segment[symbol]
 	return (bits | 0b1000_0000_0000_000) if decimal_point else bits
+
+
+## --- 3x5 Dot Matrix Display ---
+const dot3x5: Dictionary[String, int] = {
+	"":  0b000_000_000_000_000, "-": 0b000_000_111_000_000, "0": 0b111_101_101_101_111,
+	"1": 0b001_011_001_001_001, "2": 0b111_001_111_100_111, "3": 0b111_001_011_001_111,
+	"4": 0b001_011_101_111_001, "5": 0b111_100_111_001_111, "6": 0b110_100_111_101_111,
+	"7": 0b111_001_010_010_010, "8": 0b111_101_111_101_111, "9": 0b111_101_111_001_011,
+}
+
+static func get_dot3x5_segment_digit(digit: int, _decimal_point: bool = false) -> int:
+	if !dot3x5.has(str(digit)):
+		return 0
+	var bits: int = dot3x5[str(digit)]
+	return bits
+
+static func get_dot3x5_segment_symbol(symbol: String, _decimal_point: bool = false) -> int:
+	if !dot3x5.has(symbol):
+		return 0
+	var bits: int = dot3x5[symbol]
+	return bits

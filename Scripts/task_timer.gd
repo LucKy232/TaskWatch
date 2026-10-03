@@ -3,6 +3,7 @@ class_name TaskTimer extends Control
 ## 0, 1 HH  |  2, 3 MM  |  4, 5 SS
 @export var material_7_segment: ShaderMaterial
 @export var material_14_segment: ShaderMaterial
+@export var material_dot3x5_segment: ShaderMaterial
 @export var segments: Array[ColorRect]
 @onready var h_box_container: HBoxContainer = $HBoxContainer
 @onready var dots_1: ColorRect = $HBoxContainer/Dots1
@@ -10,6 +11,16 @@ class_name TaskTimer extends Control
 var state: TimerState = TimerState.STOPPED
 var display_type: E.DisplayType = E.DisplayType.FOURTEEN_SEGMENT
 var show_seconds: bool = true
+
+const dot_coords: Dictionary[int, Vector2] = {
+	0: Vector2(0.6055, 0.0),
+	1: Vector2(0.6055, 0.25),
+	2: Vector2(0.6055, 0.50),
+	3: Vector2(0.6055, 0.75),
+	4: Vector2(0.6685, 0.0),
+	5: Vector2(0.6685, 0.25),
+}
+var dot_id: int = 0
 
 enum TimerState {
 	STOPPED,
@@ -21,6 +32,11 @@ enum TimerState {
 func _ready() -> void:
 	dots_1.material.set_shader_parameter("lit", true)
 	dots_2.material.set_shader_parameter("lit", true)
+
+
+func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed("test"):
+		cycle_dot()
 
 
 func set_digit_color(color: Color, show_unlit: bool = true) -> void:
@@ -37,6 +53,15 @@ func set_digit_color(color: Color, show_unlit: bool = true) -> void:
 	toggle_dots(true)
 
 
+func cycle_dot() -> void:
+	if display_type == E.DisplayType.DOT_MATRIX_3x5:
+		dot_id += 1
+		if !dot_coords.has(dot_id):
+			dot_id = 0
+		for s in segments:
+			s.material.set_shader_parameter("UV_OFFSET", dot_coords[dot_id])
+
+
 func toggle_seconds(toggle_on: bool) -> void:
 	dots_2.visible = toggle_on
 	segments[4].visible = toggle_on
@@ -50,9 +75,18 @@ func change_display_type(type: E.DisplayType) -> void:
 		E.DisplayType.SEVEN_SEGMENT:
 			for segment in segments:
 				segment.material = material_7_segment.duplicate()
+				segment.custom_minimum_size = Vector2(80.0, 128.0)
+				size = Vector2.ZERO
 		E.DisplayType.FOURTEEN_SEGMENT:
 			for segment in segments:
 				segment.material = material_14_segment.duplicate()
+				segment.custom_minimum_size = Vector2(80.0, 128.0)
+				size = Vector2.ZERO
+		E.DisplayType.DOT_MATRIX_3x5:
+			for segment in segments:
+				segment.material = material_dot3x5_segment.duplicate()
+				segment.custom_minimum_size = Vector2(75.0, 125.0)
+				size = Vector2.ZERO		# TODO resize top bar
 
 
 func toggle_dots(toggled_on: bool) -> void:
@@ -70,6 +104,8 @@ func display_time(hour: int, minute: int, second: int) -> void:
 			decode_function = SegmentEncoder.get_seven_segment_digit
 		E.DisplayType.FOURTEEN_SEGMENT:
 			decode_function = SegmentEncoder.get_fourteen_segment_digit
+		E.DisplayType.DOT_MATRIX_3x5:
+			decode_function = SegmentEncoder.get_dot3x5_segment_digit
 	
 	var ms: int = Time.get_ticks_msec() % 2000	# Animation time
 	var decimal_points: Array[bool]

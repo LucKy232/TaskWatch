@@ -17,7 +17,7 @@ enum SideH {
 enum DisplayType {
 	SEVEN_SEGMENT,
 	FOURTEEN_SEGMENT,
-	#DOT_MATRIX_3x5,
+	DOT_MATRIX_3x5,
 	#DOT_MATRIX_27,
 	#DOT_MATRIX_33,
 	#DOT_MATRIX_6x5,
@@ -27,7 +27,7 @@ enum DisplayType {
 const DisplayTypeNames: Dictionary[DisplayType, String] = {
 	DisplayType.SEVEN_SEGMENT: "7 Seg",
 	DisplayType.FOURTEEN_SEGMENT: "14 Seg",
-	#DisplayType.DOT_MATRIX_3x5: "Dot 3x5",
+	DisplayType.DOT_MATRIX_3x5: "Dot 3x5",
 	#DisplayType.DOT_MATRIX_27: "Dot 27",
 	#DisplayType.DOT_MATRIX_33: "Dot 33",
 	#DisplayType.DOT_MATRIX_6x5: "Dot 6x5",

@@ -52,7 +52,11 @@ func _process(_delta: float) -> void:
 		settings_panel.scale_up()
 	if Input.is_action_just_pressed("scale_down", true) and !task_description_line_edit.is_editing():
 		settings_panel.scale_down()
-		
+	if Input.is_action_just_pressed("reset_position", true) and !task_description_line_edit.is_editing():
+		reset_position()
+	if Input.is_action_just_pressed("maximize_window", true) and !task_description_line_edit.is_editing():
+		maximize_window()
+	
 	if current_task.is_started:
 		tick_current_task(false)
 		task_timer.state = task_timer.TimerState.PLAYING
@@ -282,6 +286,8 @@ func save_all() -> void:
 
 func set_always_on_top(toggled_on: bool) -> void:
 	get_window().always_on_top = toggled_on
+	maximize_window()
+	set_mouse_passtrough.call_deferred()
 
 
 # Find min/max x/y from all 4 canvas items:
@@ -308,7 +314,7 @@ func set_mouse_passtrough() -> void:
 	var max_x: float = x_values.max()
 	var min_y: float = y_values.min()
 	var max_y: float = y_values.max()
-	var margin: float = 0.0
+	var margin: float = 3.0
 	polygon.clear()
 	polygon.append(Vector2(min_x - margin, min_y - margin))
 	polygon.append(Vector2(max_x + margin, min_y - margin))
@@ -395,6 +401,12 @@ func hide_buttons() -> void:
 	entry_list.visible = false
 	timer_and_buttons.size = Vector2.ZERO
 	set_mouse_passtrough()
+
+
+func reset_position() -> void:
+	timer_and_buttons.position = timer_and_buttons.pan_limits(Vector2.ZERO)
+	timer_and_buttons.find_quadrant_and_reorder()
+	_on_draggable_position_changed()
 
 
 # Replace quit behaviour with save file + quit
@@ -538,9 +550,7 @@ func _on_system_tray_menu(id: int) -> void:
 			set_always_on_top(settings_data.always_on_top)
 			system_tray.set_always_on_top_checked(settings_data.always_on_top)
 		2:
-			timer_and_buttons.position = timer_and_buttons.pan_limits(Vector2.ZERO)
-			timer_and_buttons.find_quadrant_and_reorder()
-			_on_draggable_position_changed()
+			reset_position()
 		3:
 			var screen: int = DisplayServer.window_get_current_screen()
 			var count: int = DisplayServer.get_screen_count()

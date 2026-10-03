@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://b5svc0bwgcx1r"]
+
+[ext_resource type="Material" uid="uid://bm08tf4ehtc0r" path="res://Displays/DotMatrixDisplay/dot_matrix_3x5_material.tres" id="1_2tfjj"]
+
+[node name="DotMatrixSegment" type="ColorRect" unique_id=1102154902]
+material = ExtResource("1_2tfjj")
+offset_right = 75.0
+offset_bottom = 125.0
