@@ -1,13 +1,14 @@
 [gd_resource type="Theme" format=3 uid="uid://dirmfsg7xnbxr"]
 
 [ext_resource type="Texture2D" uid="uid://c5cerpl8isdkx" path="res://Icons/CloseButton.svg" id="1_2nl5o"]
+[ext_resource type="FontFile" uid="uid://y7k0ns51eorm" path="res://UI/MontserratBold.otf" id="2_h32ur"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7m7pu"]
-bg_color = Color(0.8047426, 0.80474263, 0.8047425, 0.24705882)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+bg_color = Color(0.43, 0.43, 0.43, 0.43529412)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 1
+border_width_bottom = 1
 border_color = Color(0.015999984, 0.48, 0, 1)
 corner_radius_top_left = 2
 corner_radius_top_right = 2
@@ -20,10 +21,10 @@ expand_margin_bottom = 1.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2nl5o"]
 bg_color = Color(0.6, 0.6, 0.6, 0.09803922)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
 border_color = Color(0.015999984, 0.48, 0, 1)
 corner_radius_top_left = 2
 corner_radius_top_right = 2
@@ -81,8 +82,19 @@ expand_margin_top = 1.0
 expand_margin_right = 2.0
 expand_margin_bottom = 1.0
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5f78n"]
+bg_color = Color(0.73085356, 0.71965265, 0.74200296, 0.30588236)
+border_width_top = 2
+border_width_bottom = 2
+border_color = Color(0.015999984, 0.48, 0, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ou33m"]
-bg_color = Color(0.12, 0.12, 0.12, 0.654902)
+bg_color = Color(0.19434929, 0.19434926, 0.19434926, 0.80784315)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -92,6 +104,27 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2rtvr"]
+content_margin_top = 24.0
+content_margin_bottom = 24.0
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_left = 6.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8wpuh"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_left = 6.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_431p2"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ovyjt"]
 
 [resource]
 Button/styles/focus = SubResource("StyleBoxFlat_7m7pu")
@@ -107,7 +140,15 @@ CheckBox/icons/checked = ExtResource("1_2nl5o")
 CheckBox/icons/checked_disabled = null
 CheckBox/styles/pressed = SubResource("StyleBoxEmpty_2nl5o")
 LineEdit/font_sizes/font_size = 16
+LineEdit/fonts/font = ExtResource("2_h32ur")
 LineEdit/styles/focus = SubResource("StyleBoxFlat_cfsd7")
 LineEdit/styles/normal = SubResource("StyleBoxFlat_qm5hq")
-Panel/styles/panel = SubResource("StyleBoxFlat_ou33m")
+Panel/styles/panel = SubResource("StyleBoxFlat_5f78n")
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_ou33m")
+VScrollBar/constants/padding_left = 9
+VScrollBar/constants/padding_right = 3
+VScrollBar/styles/grabber = SubResource("StyleBoxFlat_2rtvr")
+VScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_8wpuh")
+VScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_2rtvr")
+VScrollBar/styles/scroll = SubResource("StyleBoxEmpty_431p2")
+VScrollBar/styles/scroll_focus = SubResource("StyleBoxEmpty_ovyjt")

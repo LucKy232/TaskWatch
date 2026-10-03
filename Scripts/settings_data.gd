@@ -4,9 +4,11 @@ var digit_color: Color = Color.DARK_RED
 var background_color: Color = Color.TRANSPARENT
 var show_clock: bool = false
 var show_unlit_segments: bool = true
+var show_seconds: bool = true
 var always_on_top: bool = true
 var timer_scale: float = 1.0
 var timer_position: Vector2 = Vector2.ZERO
+var display_type: E.DisplayType = E.DisplayType.SEVEN_SEGMENT
 var screen_id: int = 0	## Which monitor the application is displayed on, no multi-monitor support because maximized
 var opened_file_paths: Array[String] = []
 var opened_file_id: int = 0
@@ -20,12 +22,16 @@ func get_current_project_path() -> String:
 
 
 func load_from_dictionary(dict) -> void:
-	if dict.has("show_clock"):
-		show_clock = bool(dict["show_clock"])
 	digit_color = Color(dict["color.r"], dict["color.g"], dict["color.b"], dict["color.a"])
 	background_color = Color(dict["background_color.r"], dict["background_color.g"], dict["background_color.b"], dict["background_color.a"])
+	if dict.has("show_clock"):
+		show_clock = bool(dict["show_clock"])
 	show_unlit_segments = bool(dict["show_unlit_segments"])
+	if dict.has("show_seconds"):
+		show_seconds = bool(dict["show_seconds"])
 	always_on_top = bool(dict["always_on_top"])
+	if dict.has("display_type"):
+		display_type = dict["display_type"] as E.DisplayType
 	timer_scale = dict["timer_scale"]
 	timer_position = Vector2(dict["timer_position_x"], dict["timer_position_y"])
 	screen_id = int(dict["screen_id"])
@@ -45,11 +51,13 @@ func to_json() -> Dictionary:
 	dict["background_color.a"] = background_color.a
 	dict["show_clock"] = show_clock
 	dict["show_unlit_segments"] = show_unlit_segments
+	dict["show_seconds"] = show_seconds
 	dict["timer_scale"] = timer_scale
 	dict["timer_position_x"] = timer_position.x
 	dict["timer_position_y"] = timer_position.y
 	dict["screen_id"] = screen_id
 	dict["always_on_top"] = always_on_top
+	dict["display_type"] = display_type
 	dict["opened_file_id"] = opened_file_id
 	dict["opened_file_paths"] = opened_file_paths_to_json()
 	return dict

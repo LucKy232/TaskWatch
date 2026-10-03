@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://b0fbykabwwybo"]
+
+[ext_resource type="Material" uid="uid://usuq5ki65ndg" path="res://Displays/14SegmentDisplay/14_segment_material.tres" id="1_xwccp"]
+
+[node name="7Segment" type="ColorRect" unique_id=1102154902]
+material = ExtResource("1_xwccp")
+custom_minimum_size = Vector2(80, 128)

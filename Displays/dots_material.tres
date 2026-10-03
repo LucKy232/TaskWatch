@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://c5aum78fgqqjp"]
+
+[ext_resource type="Shader" uid="uid://dexvgpvdbx7xj" path="res://Displays/dots.gdshader" id="1_4ads7"]
+[ext_resource type="Texture2D" uid="uid://0six1v76axg3" path="res://Displays/texture_atlas.png" id="2_lyxhg"]
+
+[resource]
+resource_local_to_scene = true
+shader = ExtResource("1_4ads7")
+shader_parameter/digit_color = Color(0.72156864, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72156864, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("2_lyxhg")
+shader_parameter/lit = true
+shader_parameter/UV_OFFSET = Vector2(15.21, 0)
+shader_parameter/UV_SCALE = Vector2(0.04, 1)

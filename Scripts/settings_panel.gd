@@ -3,28 +3,17 @@ class_name SettingsPanel extends Control
 @onready var color_picker_button: ColorPickerButton = %ColorPickerButton
 @onready var bg_color_picker_button: ColorPickerButton = %BGColorPickerButton
 @onready var scale_option_button: OptionButton = %ScaleOptionButton
+@onready var display_type_option_button: OptionButton = %DisplayTypeOptionButton
 @onready var unlit_segments_checkbox: CheckBox = %UnlitSegmentsCheckbox
 @onready var always_on_top_checkbox: CheckBox = %AlwaysOnTopCheckbox
+@onready var show_seconds_checkbox: CheckBox = %ShowSecondsCheckbox
 @onready var version_number: Label = $VersionNumber
 
-var popup_1: PopupPanel
-var popup_2: PopupPanel
-var popup_3: PopupMenu
+var popup_1: PopupPanel	## color_picker_button popup
+var popup_2: PopupPanel	## bg_color_picker_button popup
+var popup_3: PopupMenu	## scale_option_button popup
 var picked_color: Color
 var picked_bg_color: Color
-var scale_dict: Dictionary[int, float] = {
-	0: 0.10,
-	1: 0.20,
-	2: 0.30,
-	3: 0.40,
-	4: 0.50,
-	5: 0.75,
-	6: 1.00,
-	7: 1.25,
-	8: 1.50,
-	9: 2.00,
-	10: 3.00,
-}
 
 signal color_changed 
 signal bg_color_changed
@@ -32,6 +21,9 @@ signal scale_changed
 signal unlit_segments_toggled
 signal always_on_top_toggled
 signal color_picker_toggled
+signal show_seconds_toggled
+signal display_type_changed
+
 
 func _ready() -> void:
 	popup_1 = color_picker_button.get_popup()
@@ -42,13 +34,25 @@ func _ready() -> void:
 	popup_3.visibility_changed.connect(_on_color_picker_popup)
 	var app_version: String = ProjectSettings.get_setting("application/config/version")
 	version_number.text = ("v%s" % app_version)
+	populate_scale_option_button()
+	populate_display_type_option_button()
+
+
+func populate_scale_option_button() -> void:
+	for s in E.scale_dict:
+		scale_option_button.add_item("%0.0f%%" % [E.scale_dict[s] * 100.0])
+
+
+func populate_display_type_option_button() -> void:
+	for type_name in E.DisplayTypeNames.values():
+		display_type_option_button.add_item(type_name)
 
 
 func set_digit_color(c: Color) -> void:
 	color_picker_button.color = c
 
 
-func set_background_color(c: Color) -> void:
+func set_background_color_picker_color(c: Color) -> void:
 	bg_color_picker_button.color = c
 
 
@@ -60,10 +64,18 @@ func set_always_on_top_checkbox_pressed(toggled_on: bool) -> void:
 	always_on_top_checkbox.set_pressed_no_signal(toggled_on)
 
 
+func set_show_seconds_checkbox_pressed(toggled_on: bool) -> void:
+	show_seconds_checkbox.set_pressed_no_signal(toggled_on)
+
+
 func set_picked_scale(s: float) -> void:
-	for i in scale_dict:
-		if scale_dict[i] == s:
+	for i in E.scale_dict:
+		if E.scale_dict[i] == s:
 			scale_option_button.selected = i
+
+
+func set_picked_display_type(type: E.DisplayType) -> void:
+	display_type_option_button.selected = type as int
 
 
 func scale_up() -> void:
@@ -132,8 +144,12 @@ func _on_bg_color_picker_button_popup_closed() -> void:
 
 
 func _on_scale_option_button_item_selected(index: int) -> void:
-	if scale_dict.has(index):
-		scale_changed.emit(scale_dict[index])
+	if E.scale_dict.has(index):
+		scale_changed.emit(E.scale_dict[index])
+
+
+func _on_display_type_option_button_item_selected(index: int) -> void:
+	display_type_changed.emit(index as E.DisplayType)
 
 
 func _on_unlit_segments_checkbox_toggled(toggled_on: bool) -> void:
@@ -142,3 +158,7 @@ func _on_unlit_segments_checkbox_toggled(toggled_on: bool) -> void:
 
 func _on_always_on_top_checkbox_toggled(toggled_on: bool) -> void:
 	always_on_top_toggled.emit(toggled_on)
+
+
+func _on_show_seconds_checkbox_toggled(toggled_on: bool) -> void:
+	show_seconds_toggled.emit(toggled_on)

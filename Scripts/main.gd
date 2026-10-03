@@ -4,7 +4,7 @@ const MAIN_THEME = preload("uid://dirmfsg7xnbxr")
 @export var settings_file_path: String = "user://settings_data.json"
 @export var play_icon: CompressedTexture2D
 @export var pause_icon: CompressedTexture2D
-@onready var task_timer: TaskTimer = %SegmentTimer
+@onready var task_timer: TaskTimer = %TaskTimer
 @onready var entry_list: EntryList = $EntryList
 @onready var settings_panel: SettingsPanel = $SettingsPanel
 @onready var timer_and_buttons: Draggable = $TimerAndButtons
@@ -13,38 +13,22 @@ const MAIN_THEME = preload("uid://dirmfsg7xnbxr")
 @onready var show_clock_button: Button = %ShowClockButton
 @onready var minimize_app_button: Button = %MinimizeAppButton
 @onready var task_description_line_edit: LineEdit = %TaskDescriptionLineEdit
-@onready var buttons_v_box: VBoxContainer = %ButtonsVBox
-@onready var buttons_h_box: HBoxContainer = %ButtonsHBox
+@onready var top_buttons_control: Control = %TopButtonsControl
+@onready var side_buttons_grid: GridContainer = %SideButtonsGrid
 @onready var show_list_button: Button = %ShowListButton
 @onready var show_settings_button: Button = %ShowSettingsButton
-@onready var hover_timer: Timer = $HoverTimer
+@onready var task_timer_control: Control = %TaskTimerControl
 @onready var system_tray: SystemTray = $SystemTray
-
 var settings_data: SettingsData = SettingsData.new()
 var current_task: Task = Task.new(0)
 
 
 func _ready() -> void:
 	get_tree().set_auto_accept_quit(false)
-	call_deferred("resize_to_screen")
-	call_deferred("set_mouse_passtrough")
-	settings_panel.color_changed.connect(_on_digit_color_changed)
-	settings_panel.bg_color_changed.connect(_on_background_color_changed)
-	settings_panel.scale_changed.connect(_on_scale_changed)
-	settings_panel.unlit_segments_toggled.connect(_on_unlit_segments_toggled)
-	settings_panel.color_picker_toggled.connect(_on_settings_color_picker_toggled)
-	settings_panel.always_on_top_toggled.connect(_on_always_on_top_toggled)
-	timer_and_buttons.position_changed.connect(_on_draggable_position_changed)
-	timer_and_buttons.gui_input.connect(_on_gui_input)
-	settings_panel.gui_input.connect(_on_gui_input)
-	entry_list.gui_input.connect(_on_gui_input)
-	settings_panel.popup_1.window_input.connect(_on_gui_input)
-	settings_panel.popup_2.window_input.connect(_on_gui_input)
-	settings_panel.popup_3.window_input.connect(_on_gui_input)
-	system_tray.system_tray_menu_pressed.connect(_on_system_tray_menu)
-	system_tray.status_indicator.pressed.connect(_on_status_indicator_pressed)
-	entry_list.project_name.editing_toggled.connect(_on_line_edit_editing_toggled)
-	
+	fullscreen_window.call_deferred()
+	maximize_window.call_deferred()
+	set_mouse_passtrough.call_deferred()
+	connect_signals()
 	set_button_shortcut_events()
 	# Load settings
 	if !FileAccess.file_exists(settings_file_path):
@@ -59,13 +43,16 @@ func _ready() -> void:
 	else:
 		load_current_project_file()
 
-
+  
 func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed("scale_up", true):
+	if !get_window().has_focus() and top_buttons_control.visible:
+		hide_buttons()
+		
+	if Input.is_action_just_pressed("scale_up", true) and !task_description_line_edit.is_editing():
 		settings_panel.scale_up()
-	if Input.is_action_just_pressed("scale_down", true):
+	if Input.is_action_just_pressed("scale_down", true) and !task_description_line_edit.is_editing():
 		settings_panel.scale_down()
-	
+		
 	if current_task.is_started:
 		tick_current_task(false)
 		task_timer.state = task_timer.TimerState.PLAYING
@@ -91,6 +78,27 @@ func _process(_delta: float) -> void:
 		change_screen(screen_id)
 
 
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.is_pressed():
+		show_buttons()
+		get_window().grab_focus()
+
+
+func connect_signals() -> void:
+	settings_panel.color_changed.connect(_on_digit_color_changed)
+	settings_panel.bg_color_changed.connect(_on_background_color_changed)
+	settings_panel.scale_changed.connect(_on_scale_changed)
+	settings_panel.unlit_segments_toggled.connect(_on_unlit_segments_toggled)
+	settings_panel.show_seconds_toggled.connect(_on_show_seconds_toggled)
+	settings_panel.color_picker_toggled.connect(_on_settings_color_picker_toggled)
+	settings_panel.always_on_top_toggled.connect(_on_always_on_top_toggled)
+	settings_panel.display_type_changed.connect(_on_display_type_changed)
+	timer_and_buttons.position_changed.connect(_on_draggable_position_changed)
+	system_tray.system_tray_menu_pressed.connect(_on_system_tray_menu)
+	system_tray.status_indicator.pressed.connect(_on_status_indicator_pressed)
+	entry_list.project_name.editing_toggled.connect(_on_line_edit_editing_toggled)
+
+
 func change_screen(screen_number: int) -> void:
 	if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_MAXIMIZED:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
@@ -102,18 +110,19 @@ func change_screen(screen_number: int) -> void:
 	_on_draggable_position_changed()
 
 
-func resize_to_screen() -> void:
-	get_window().mode = Window.Mode.MODE_MAXIMIZED
-
-
 func minimize_window() -> void:
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, false)
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MINIMIZED)
 
 
 func maximize_window() -> void:
-	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, true)
+	show_buttons()
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, false)
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MAXIMIZED)
+
+
+func fullscreen_window() -> void:
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 
 
 func set_button_shortcut_events() -> void:
@@ -201,13 +210,16 @@ func load_current_project_file() -> void:
 		printerr("@main.gd : load_current_project_file() - Can't parse json string!")
 		return
 	entry_list.populate_entries_from_dict(data)
+	entry_list.build_all_summaries()
 
 
 func apply_settings_data() -> void:
 	DisplayServer.window_set_current_screen(settings_data.screen_id)
 	set_theme_color(settings_data.digit_color)
+	task_timer.change_display_type(settings_data.display_type)
 	task_timer.set_digit_color(settings_data.digit_color, settings_data.show_unlit_segments)
 	task_timer.set_background_color(settings_data.background_color)
+	_on_show_seconds_toggled(settings_data.show_seconds)
 	task_timer.toggle_dots(true)
 	timer_and_buttons.set_timer_scale(settings_data.timer_scale)
 	timer_and_buttons.position = settings_data.timer_position
@@ -217,9 +229,11 @@ func apply_settings_data() -> void:
 	system_tray.set_always_on_top_checked(settings_data.always_on_top)
 	# Visible settings
 	settings_panel.set_picked_scale(settings_data.timer_scale)
+	settings_panel.set_picked_display_type(settings_data.display_type)
 	settings_panel.set_digit_color(settings_data.digit_color)
-	settings_panel.set_background_color(settings_data.background_color)
+	settings_panel.set_background_color_picker_color(settings_data.background_color)
 	settings_panel.set_unlit_checkbox_pressed(settings_data.show_unlit_segments)
+	settings_panel.set_show_seconds_checkbox_pressed(settings_data.show_seconds)
 	settings_panel.set_always_on_top_checkbox_pressed(settings_data.always_on_top)
 	show_clock_button.set_pressed_no_signal(settings_data.show_clock)
 
@@ -232,8 +246,11 @@ func set_theme_color(c: Color) -> void:
 	MAIN_THEME.get_stylebox("pressed", "Button").border_color = c
 	MAIN_THEME.get_stylebox("normal", "LineEdit").border_color = c
 	MAIN_THEME.get_stylebox("panel", "Panel").border_color = c
+	MAIN_THEME.get_stylebox("panel", "Panel").bg_color = Color(c.r, c.g, c.b, 0.2).darkened(0.2)
 	MAIN_THEME.get_stylebox("panel", "PanelContainer").border_color = c
 	MAIN_THEME.set_color("checkbox_checked_color", "CheckBox", c)
+	MAIN_THEME.get_stylebox("grabber", "VScrollBar").bg_color = c
+	MAIN_THEME.get_stylebox("grabber_highlight", "VScrollBar").bg_color = c.lightened(0.3)
 
 
 func tick_current_task(break_time: bool = false) -> void:
@@ -291,13 +308,12 @@ func set_mouse_passtrough() -> void:
 	var max_x: float = x_values.max()
 	var min_y: float = y_values.min()
 	var max_y: float = y_values.max()
-	var margin: float = 8.0
+	var margin: float = 0.0
 	polygon.clear()
 	polygon.append(Vector2(min_x - margin, min_y - margin))
 	polygon.append(Vector2(max_x + margin, min_y - margin))
 	polygon.append(Vector2(max_x + margin, max_y + margin))
 	polygon.append(Vector2(min_x - margin, max_y + margin))
-	
 	get_window().mouse_passthrough_polygon = polygon
 
 
@@ -319,23 +335,66 @@ func get_entry_list_passtrough() -> PackedVector2Array:
 	return corners
 
 
-func set_panel_positions() -> void:
-	var top: float = 0.0 if timer_and_buttons.side_vertical == timer_and_buttons.SideV.TOP else 1.0
-	var list_visible: float = 1.0 if entry_list.is_visible() else 0.0
+func set_entry_list_position() -> void:
+	var top: float = 0.0 if timer_and_buttons.side_vertical == E.SideV.TOP else 1.0
+	var right: float = 0.0 if timer_and_buttons.side_horizontal == E.SideH.LEFT else 1.0
 	var timer_size: Vector2 = timer_and_buttons.size * timer_and_buttons.scale
 	entry_list.position.x = (timer_and_buttons.position.x
-							+ timer_size.x
-							- entry_list.size.x)
+							+ timer_size.x * right
+							- entry_list.size.x * right)
 	entry_list.position.y = (timer_and_buttons.position.y
 							- entry_list.size.y * top
 							+ timer_size.y * (1.0 - top))
+
+
+func set_settings_panel_position() -> void:
+	var top: float = 0.0 if timer_and_buttons.side_vertical == E.SideV.TOP else 1.0
+	var right: float = 0.0 if timer_and_buttons.side_horizontal == E.SideH.LEFT else 1.0
+	var timer_size: Vector2 = timer_and_buttons.size * timer_and_buttons.scale
+	#if timer_and_buttons.side_horizontal
 	settings_panel.position.x = (timer_and_buttons.position.x
-							+ timer_size.x
-							- settings_panel.size.x
-							- entry_list.size.x * list_visible)
+							+ timer_size.x * right
+							- settings_panel.size.x * right)
 	settings_panel.position.y = (timer_and_buttons.position.y
 							- settings_panel.size.y * top
 							+ timer_size.y * (1.0 - top))
+
+
+func show_buttons() -> void:
+	var set_passtrough: bool = false
+	var set_panels: bool = false
+	
+	if !top_buttons_control.visible or !side_buttons_grid.visible:
+		top_buttons_control.visible = true
+		side_buttons_grid.visible = true
+		set_passtrough = true
+		timer_and_buttons.reposition_timer(true)
+	if show_settings_button.is_pressed() and !settings_panel.is_visible():
+		settings_panel.visible = true
+		set_panels = true
+		set_passtrough = true
+	if show_list_button.is_pressed() and !entry_list.is_visible():
+		entry_list.visible = true
+		set_panels = true
+		set_passtrough = true
+	if set_panels:
+		set_entry_list_position()
+		set_settings_panel_position()
+	if set_passtrough:
+		set_mouse_passtrough()
+
+
+func hide_buttons() -> void:
+	if get_window().gui_get_focus_owner() is LineEdit and get_window().gui_get_focus_owner().is_editing:
+		return
+	if top_buttons_control.visible or side_buttons_grid.visible:
+		top_buttons_control.visible = false
+		side_buttons_grid.visible = false
+		timer_and_buttons.reposition_timer(false)
+	settings_panel.visible = false
+	entry_list.visible = false
+	timer_and_buttons.size = Vector2.ZERO
+	set_mouse_passtrough()
 
 
 # Replace quit behaviour with save file + quit
@@ -347,13 +406,15 @@ func _notification(what):
 
 func _on_scale_changed(s: float) -> void:
 	settings_data.timer_scale = s
+	var right_edge: float = timer_and_buttons.global_position.x + timer_and_buttons.size.x if timer_and_buttons.side_horizontal == E.SideH.RIGHT else 0.0
+	var bottom_edge: float = timer_and_buttons.global_position.y + timer_and_buttons.size.y if timer_and_buttons.side_vertical == E.SideV.BOTTOM else 0.0
 	timer_and_buttons.set_timer_scale(s)
-	timer_and_buttons.reposition_timer(false)
+	timer_and_buttons.reposition_along_corners.call_deferred(right_edge, bottom_edge)
 
 
 func _on_digit_color_changed(c: Color) -> void:
 	settings_data.digit_color = c
-	task_timer.set_digit_color(c, settings_data.show_unlit_segments)
+	task_timer.set_digit_color(settings_data.digit_color, settings_data.show_unlit_segments)
 	set_theme_color(c)
 
 
@@ -365,6 +426,21 @@ func _on_background_color_changed(c: Color) -> void:
 func _on_unlit_segments_toggled(toggled_on: bool) -> void:
 	settings_data.show_unlit_segments = toggled_on
 	task_timer.set_digit_color(settings_data.digit_color, toggled_on)
+
+
+func _on_show_seconds_toggled(toggled_on: bool) -> void:
+	settings_data.show_seconds = toggled_on
+	task_timer.toggle_seconds(toggled_on)
+	task_timer.size = Vector2.ZERO
+	timer_and_buttons.set_timer_scale(settings_data.timer_scale)
+	set_settings_panel_position()
+	set_mouse_passtrough()
+
+
+func _on_display_type_changed(type: E.DisplayType) -> void:
+	settings_data.display_type = type
+	task_timer.change_display_type(type)
+	task_timer.set_digit_color(settings_data.digit_color, settings_data.show_unlit_segments)
 
 
 func _on_play_pause_button_toggled(toggled_on: bool) -> void:
@@ -405,13 +481,19 @@ func _on_show_clock_button_toggled(toggled_on: bool) -> void:
 
 func _on_show_list_button_toggled(toggled_on: bool) -> void:
 	entry_list.visible = toggled_on
-	set_panel_positions()
+	if toggled_on:
+		settings_panel.visible = false
+		show_settings_button.set_pressed_no_signal(false)
+	set_entry_list_position()
 	set_mouse_passtrough()
 
 
 func _on_show_settings_button_toggled(toggled_on: bool) -> void:
 	settings_panel.visible = toggled_on
-	set_panel_positions()
+	if toggled_on:
+		entry_list.visible = false
+		show_list_button.set_pressed_no_signal(false)
+	set_settings_panel_position()
 	set_mouse_passtrough()
 
 
@@ -424,60 +506,17 @@ func _on_exit_app_button_pressed() -> void:
 	get_tree().quit()
 
 
-func _on_timer_show_buttons() -> void:
-	var set_passtrough: bool = false
-	var set_panels: bool = false
-	
-	if !buttons_h_box.visible or !buttons_v_box.visible:
-		buttons_h_box.visible = true
-		buttons_v_box.visible = true
-		set_passtrough = true
-		timer_and_buttons.reposition_timer(true)
-	if show_settings_button.is_pressed() and !settings_panel.is_visible():
-		settings_panel.visible = true
-		set_panels = true
-		set_passtrough = true
-	if show_list_button.is_pressed() and !entry_list.is_visible():
-		entry_list.visible = true
-		set_panels = true
-		set_passtrough = true
-	
-	if set_panels:
-		set_panel_positions()
-	if set_passtrough:
-		set_mouse_passtrough()
-
-
-func _on_timer_hide_buttons() -> void:
-	if get_window().gui_get_focus_owner() is LineEdit and get_window().gui_get_focus_owner().is_editing:
-		return
-	if buttons_h_box.visible or buttons_v_box.visible:
-		buttons_h_box.visible = false
-		buttons_v_box.visible = false
-		timer_and_buttons.reposition_timer(false)
-	settings_panel.visible = false
-	entry_list.visible = false
-	set_mouse_passtrough()
-
-
 func _on_draggable_position_changed() -> void:
 	settings_data.timer_position = timer_and_buttons.position
-	set_panel_positions()
+	if settings_panel.visible:
+		set_settings_panel_position()
+	if entry_list.visible:
+		set_entry_list_position()
 	set_mouse_passtrough()
 
 
 func _on_settings_color_picker_toggled() -> void:
 	set_mouse_passtrough()
-
-
-func _on_hover_timer_timeout() -> void:
-	_on_timer_hide_buttons()
-
-
-## _on_mouse_entered() and _on_mouse_exited() aren't reliable with transparent windows
-func _on_gui_input(_event: InputEvent) -> void:
-	_on_timer_show_buttons()
-	hover_timer.start()
 
 
 func _on_autosave_timer_timeout() -> void:

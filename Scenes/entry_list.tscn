@@ -1,9 +1,12 @@
 [gd_scene format=3 uid="uid://d172ayshc1gb8"]
 
 [ext_resource type="Script" uid="uid://r1b6dbyoy87d" path="res://Scripts/entry_list.gd" id="1_7y1um"]
+[ext_resource type="Theme" uid="uid://dirmfsg7xnbxr" path="res://UI/main_theme.tres" id="1_nt3kf"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_7y1um"]
 
 [node name="EntryList" type="Control" unique_id=2044402737]
-custom_minimum_size = Vector2(320, 320)
+custom_minimum_size = Vector2(362, 320)
 layout_mode = 3
 anchors_preset = 0
 offset_right = 320.0
@@ -11,9 +14,9 @@ offset_bottom = 320.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 mouse_filter = 1
+theme = ExtResource("1_nt3kf")
 script = ExtResource("1_7y1um")
-entry_scene = "uid://b3bhysdbxda66"
-day_summary_scene = "uid://c5okbpeec14hc"
+button_animation_time = null
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1484746069]
 layout_mode = 1
@@ -24,8 +27,115 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
 
-[node name="TopButtonsHBox" type="HBoxContainer" parent="VBoxContainer" unique_id=1121752709]
+[node name="Control2" type="Control" parent="VBoxContainer" unique_id=188715100]
+custom_minimum_size = Vector2(0, 25)
+clip_contents = true
 layout_mode = 2
+
+[node name="ViewModeButtonsHBox" type="HBoxContainer" parent="VBoxContainer/Control2" unique_id=1121752709]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -178.0
+offset_top = -23.0
+offset_right = 178.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+
+[node name="ViewAll" type="Button" parent="VBoxContainer/Control2/ViewModeButtonsHBox" unique_id=1390800720]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 24)
+layout_mode = 2
+offset_transform_enabled = true
+tooltip_text = "All"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_7y1um")
+text = "A"
+
+[node name="ViewToday" type="Button" parent="VBoxContainer/Control2/ViewModeButtonsHBox" unique_id=1552250933]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 24)
+layout_mode = 2
+offset_transform_enabled = true
+tooltip_text = "Today"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_7y1um")
+text = "T"
+
+[node name="ViewThisWeek" type="Button" parent="VBoxContainer/Control2/ViewModeButtonsHBox" unique_id=1402824276]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 24)
+layout_mode = 2
+offset_transform_enabled = true
+tooltip_text = "This Week"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_7y1um")
+text = "W"
+
+[node name="ViewThisMonth" type="Button" parent="VBoxContainer/Control2/ViewModeButtonsHBox" unique_id=650464534]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 24)
+layout_mode = 2
+offset_transform_enabled = true
+tooltip_text = "This Month"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_7y1um")
+text = "M"
+
+[node name="ViewLast7" type="Button" parent="VBoxContainer/Control2/ViewModeButtonsHBox" unique_id=1011613070]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 24)
+layout_mode = 2
+offset_transform_enabled = true
+tooltip_text = "Last 7 Days"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_7y1um")
+text = "7d"
+
+[node name="ViewLast30" type="Button" parent="VBoxContainer/Control2/ViewModeButtonsHBox" unique_id=509392594]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 24)
+layout_mode = 2
+offset_transform_enabled = true
+tooltip_text = "Last 30 Days"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_7y1um")
+text = "30d"
+
+[node name="ViewSummaryDaily" type="Button" parent="VBoxContainer/Control2/ViewModeButtonsHBox" unique_id=90300825]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 24)
+layout_mode = 2
+offset_transform_enabled = true
+tooltip_text = "Daily Summary"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_7y1um")
+text = "DS"
+
+[node name="ViewSummaryWeekly" type="Button" parent="VBoxContainer/Control2/ViewModeButtonsHBox" unique_id=2105346253]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 24)
+layout_mode = 2
+offset_transform_enabled = true
+tooltip_text = "Weekly Summary"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_7y1um")
+text = "WS"
+
+[node name="ViewSummaryMonthly" type="Button" parent="VBoxContainer/Control2/ViewModeButtonsHBox" unique_id=1976314373]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 24)
+layout_mode = 2
+offset_transform_enabled = true
+tooltip_text = "Monthly Summary"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_7y1um")
+text = "MS"
 
 [node name="Control" type="Control" parent="VBoxContainer" unique_id=649893727]
 layout_mode = 2
@@ -63,4 +173,19 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="ScrollToBottomTimer" type="Timer" parent="." unique_id=373061319]
+wait_time = 0.05
+one_shot = true
+
+[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
+[connection signal="toggled" from="VBoxContainer/Control2/ViewModeButtonsHBox/ViewAll" to="." method="_on_view_all_toggled"]
+[connection signal="toggled" from="VBoxContainer/Control2/ViewModeButtonsHBox/ViewToday" to="." method="_on_view_today_toggled"]
+[connection signal="toggled" from="VBoxContainer/Control2/ViewModeButtonsHBox/ViewThisWeek" to="." method="_on_view_this_week_toggled"]
+[connection signal="toggled" from="VBoxContainer/Control2/ViewModeButtonsHBox/ViewThisMonth" to="." method="_on_view_this_month_toggled"]
+[connection signal="toggled" from="VBoxContainer/Control2/ViewModeButtonsHBox/ViewLast7" to="." method="_on_view_last_7_toggled"]
+[connection signal="toggled" from="VBoxContainer/Control2/ViewModeButtonsHBox/ViewLast30" to="." method="_on_view_last_30_toggled"]
+[connection signal="toggled" from="VBoxContainer/Control2/ViewModeButtonsHBox/ViewSummaryDaily" to="." method="_on_view_summary_daily_toggled"]
+[connection signal="toggled" from="VBoxContainer/Control2/ViewModeButtonsHBox/ViewSummaryWeekly" to="." method="_on_view_summary_weekly_toggled"]
+[connection signal="toggled" from="VBoxContainer/Control2/ViewModeButtonsHBox/ViewSummaryMonthly" to="." method="_on_view_summary_monthly_toggled"]
 [connection signal="text_changed" from="VBoxContainer/Control/PanelContainer/VBoxContainer/ProjectName" to="." method="_on_project_name_text_changed"]
+[connection signal="timeout" from="ScrollToBottomTimer" to="." method="_on_scroll_to_bottom_timer_timeout"]

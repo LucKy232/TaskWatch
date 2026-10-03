@@ -1,0 +1,175 @@
+[gd_scene format=3 uid="uid://bmvxpyefy5ihe"]
+
+[ext_resource type="Script" uid="uid://smht4qy1ir8r" path="res://Scripts/task_timer.gd" id="1_7m88h"]
+[ext_resource type="Material" uid="uid://dldpc106ogwuf" path="res://Displays/7SegmentDisplay/7_segment_material.tres" id="2_bryrl"]
+[ext_resource type="Material" uid="uid://usuq5ki65ndg" path="res://Displays/14SegmentDisplay/14_segment_material.tres" id="3_ccp8i"]
+[ext_resource type="PackedScene" uid="uid://vfjqcewlnjup" path="res://Displays/7SegmentDisplay/7_segment.tscn" id="4_ja6c5"]
+[ext_resource type="Shader" uid="uid://dfca1rqt07xlt" path="res://Displays/7SegmentDisplay/7_segment.gdshader" id="5_peuc8"]
+[ext_resource type="Texture2D" uid="uid://0six1v76axg3" path="res://Displays/texture_atlas.png" id="6_i8g7d"]
+[ext_resource type="PackedScene" uid="uid://cjargy4b0st5h" path="res://Displays/dots.tscn" id="7_2j05i"]
+[ext_resource type="Shader" uid="uid://dexvgpvdbx7xj" path="res://Displays/dots.gdshader" id="8_6oimk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1ugkr"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7m88h"]
+resource_local_to_scene = true
+resource_name = "Material"
+shader = ExtResource("5_peuc8")
+shader_parameter/digit_color = Color(0.72, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("6_i8g7d")
+shader_parameter/bitmask = 118
+shader_parameter/UV_OFFSET1 = Vector2(0, 0)
+shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
+shader_parameter/UV_OFFSET2 = Vector2(0.992, 0)
+shader_parameter/UV_SCALE2 = Vector2(0.151, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bryrl"]
+resource_local_to_scene = true
+resource_name = "Material"
+shader = ExtResource("5_peuc8")
+shader_parameter/digit_color = Color(0.72, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("6_i8g7d")
+shader_parameter/bitmask = 118
+shader_parameter/UV_OFFSET1 = Vector2(0, 0)
+shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
+shader_parameter/UV_OFFSET2 = Vector2(0.992, 0)
+shader_parameter/UV_SCALE2 = Vector2(0.151, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ccp8i"]
+resource_local_to_scene = true
+shader = ExtResource("8_6oimk")
+shader_parameter/digit_color = Color(0.72156864, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72156864, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("6_i8g7d")
+shader_parameter/lit = true
+shader_parameter/UV_OFFSET = Vector2(15.21, 0)
+shader_parameter/UV_SCALE = Vector2(0.04, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ja6c5"]
+resource_local_to_scene = true
+resource_name = "Material"
+shader = ExtResource("5_peuc8")
+shader_parameter/digit_color = Color(0.72, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("6_i8g7d")
+shader_parameter/bitmask = 118
+shader_parameter/UV_OFFSET1 = Vector2(0, 0)
+shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
+shader_parameter/UV_OFFSET2 = Vector2(0.992, 0)
+shader_parameter/UV_SCALE2 = Vector2(0.151, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_peuc8"]
+resource_local_to_scene = true
+resource_name = "Material"
+shader = ExtResource("5_peuc8")
+shader_parameter/digit_color = Color(0.72, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("6_i8g7d")
+shader_parameter/bitmask = 118
+shader_parameter/UV_OFFSET1 = Vector2(0, 0)
+shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
+shader_parameter/UV_OFFSET2 = Vector2(0.992, 0)
+shader_parameter/UV_SCALE2 = Vector2(0.151, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_i8g7d"]
+resource_local_to_scene = true
+shader = ExtResource("8_6oimk")
+shader_parameter/digit_color = Color(0.72156864, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72156864, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("6_i8g7d")
+shader_parameter/lit = true
+shader_parameter/UV_OFFSET = Vector2(15.21, 0)
+shader_parameter/UV_SCALE = Vector2(0.04, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2j05i"]
+resource_local_to_scene = true
+resource_name = "Material"
+shader = ExtResource("5_peuc8")
+shader_parameter/digit_color = Color(0.72, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("6_i8g7d")
+shader_parameter/bitmask = 118
+shader_parameter/UV_OFFSET1 = Vector2(0, 0)
+shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
+shader_parameter/UV_OFFSET2 = Vector2(0.992, 0)
+shader_parameter/UV_SCALE2 = Vector2(0.151, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6oimk"]
+resource_local_to_scene = true
+resource_name = "Material"
+shader = ExtResource("5_peuc8")
+shader_parameter/digit_color = Color(0.72, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("6_i8g7d")
+shader_parameter/bitmask = 118
+shader_parameter/UV_OFFSET1 = Vector2(0, 0)
+shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
+shader_parameter/UV_OFFSET2 = Vector2(0.992, 0)
+shader_parameter/UV_SCALE2 = Vector2(0.151, 1)
+
+[node name="TaskTimer" type="PanelContainer" unique_id=735116144 node_paths=PackedStringArray("segments")]
+offset_right = 588.0
+offset_bottom = 148.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1ugkr")
+script = ExtResource("1_7m88h")
+material_7_segment = ExtResource("2_bryrl")
+material_14_segment = ExtResource("3_ccp8i")
+segments = [NodePath("HBoxContainer/Segment1"), NodePath("HBoxContainer/Segment2"), NodePath("HBoxContainer/Segment3"), NodePath("HBoxContainer/Segment4"), NodePath("HBoxContainer/Segment5"), NodePath("HBoxContainer/Segment6")]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1532034494]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="Segment1" parent="HBoxContainer" unique_id=1338123524 instance=ExtResource("4_ja6c5")]
+material = SubResource("ShaderMaterial_7m88h")
+layout_mode = 2
+mouse_filter = 1
+
+[node name="Segment2" parent="HBoxContainer" unique_id=1250928915 instance=ExtResource("4_ja6c5")]
+material = SubResource("ShaderMaterial_bryrl")
+layout_mode = 2
+mouse_filter = 1
+
+[node name="Dots1" parent="HBoxContainer" unique_id=402741285 instance=ExtResource("7_2j05i")]
+material = SubResource("ShaderMaterial_ccp8i")
+layout_mode = 2
+mouse_filter = 1
+
+[node name="Segment3" parent="HBoxContainer" unique_id=649743435 instance=ExtResource("4_ja6c5")]
+material = SubResource("ShaderMaterial_ja6c5")
+layout_mode = 2
+mouse_filter = 1
+
+[node name="Segment4" parent="HBoxContainer" unique_id=695576513 instance=ExtResource("4_ja6c5")]
+material = SubResource("ShaderMaterial_peuc8")
+layout_mode = 2
+mouse_filter = 1
+
+[node name="Dots2" parent="HBoxContainer" unique_id=1453833277 instance=ExtResource("7_2j05i")]
+material = SubResource("ShaderMaterial_i8g7d")
+layout_mode = 2
+mouse_filter = 1
+
+[node name="Segment5" parent="HBoxContainer" unique_id=1512345914 instance=ExtResource("4_ja6c5")]
+material = SubResource("ShaderMaterial_2j05i")
+layout_mode = 2
+mouse_filter = 1
+
+[node name="Segment6" parent="HBoxContainer" unique_id=761893806 instance=ExtResource("4_ja6c5")]
+material = SubResource("ShaderMaterial_6oimk")
+layout_mode = 2
+mouse_filter = 1

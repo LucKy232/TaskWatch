@@ -3,11 +3,11 @@
 [ext_resource type="Script" uid="uid://b3vgopaxmwo5o" path="res://Scripts/settings_panel.gd" id="1_8hrck"]
 
 [node name="SettingsPanel" type="Control" unique_id=1190921543]
-custom_minimum_size = Vector2(220, 220)
+custom_minimum_size = Vector2(220, 278)
 layout_mode = 3
 anchors_preset = 0
-offset_right = 200.0
-offset_bottom = 150.0
+offset_right = 220.0
+offset_bottom = 278.0
 script = ExtResource("1_8hrck")
 
 [node name="VersionNumber" type="Label" parent="." unique_id=1101525206]
@@ -19,7 +19,7 @@ offset_bottom = 22.0
 theme_override_colors/font_color = Color(1, 1, 1, 0.24313726)
 text = "v0.00"
 
-[node name="Background" type="Panel" parent="." unique_id=1536580708]
+[node name="Background" type="PanelContainer" parent="." unique_id=572335841]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,12 +29,7 @@ grow_vertical = 2
 mouse_filter = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="Background" unique_id=1705880028]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
@@ -90,7 +85,7 @@ layout_mode = 2
 
 [node name="Name" type="Label" parent="Background/MarginContainer/Settings/HBoxScale" unique_id=615639750]
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 2
 text = "Scale"
 
 [node name="ScaleOptionButton" type="OptionButton" parent="Background/MarginContainer/Settings/HBoxScale" unique_id=593781657]
@@ -99,27 +94,22 @@ custom_minimum_size = Vector2(78, 0)
 layout_mode = 2
 size_flags_horizontal = 10
 theme_override_constants/arrow_margin = 4
-item_count = 10
-popup/item_0/text = "10%"
-popup/item_0/id = 0
-popup/item_1/text = "20%"
-popup/item_1/id = 1
-popup/item_2/text = "30%"
-popup/item_2/id = 2
-popup/item_3/text = "40%"
-popup/item_3/id = 3
-popup/item_4/text = "50%"
-popup/item_4/id = 4
-popup/item_5/text = "75%"
-popup/item_5/id = 5
-popup/item_6/text = "100%"
-popup/item_6/id = 6
-popup/item_7/text = "150%"
-popup/item_7/id = 7
-popup/item_8/text = "200%"
-popup/item_8/id = 8
-popup/item_9/text = "300%"
-popup/item_9/id = 9
+alignment = 2
+
+[node name="HBoxDisplayType" type="HBoxContainer" parent="Background/MarginContainer/Settings" unique_id=1527029383]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="Background/MarginContainer/Settings/HBoxDisplayType" unique_id=481149066]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Display"
+
+[node name="DisplayTypeOptionButton" type="OptionButton" parent="Background/MarginContainer/Settings/HBoxDisplayType" unique_id=2112351534]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(78, 0)
+layout_mode = 2
+size_flags_horizontal = 10
+alignment = 2
 
 [node name="HBoxShowOff" type="HBoxContainer" parent="Background/MarginContainer/Settings" unique_id=30997560]
 layout_mode = 2
@@ -134,6 +124,18 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 button_pressed = true
+
+[node name="HBoxShowSeconds" type="HBoxContainer" parent="Background/MarginContainer/Settings" unique_id=1469034489]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="Background/MarginContainer/Settings/HBoxShowSeconds" unique_id=735557442]
+layout_mode = 2
+text = "Show Seconds"
+
+[node name="ShowSecondsCheckbox" type="CheckBox" parent="Background/MarginContainer/Settings/HBoxShowSeconds" unique_id=1998725940]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
 
 [node name="HBoxAlwaysOnTop" type="HBoxContainer" parent="Background/MarginContainer/Settings" unique_id=831094505]
 layout_mode = 2
@@ -153,5 +155,7 @@ size_flags_horizontal = 10
 [connection signal="color_changed" from="Background/MarginContainer/Settings/HBoxBackground/BGColorPickerButton" to="." method="_on_bg_color_picker_button_color_changed"]
 [connection signal="popup_closed" from="Background/MarginContainer/Settings/HBoxBackground/BGColorPickerButton" to="." method="_on_bg_color_picker_button_popup_closed"]
 [connection signal="item_selected" from="Background/MarginContainer/Settings/HBoxScale/ScaleOptionButton" to="." method="_on_scale_option_button_item_selected"]
+[connection signal="item_selected" from="Background/MarginContainer/Settings/HBoxDisplayType/DisplayTypeOptionButton" to="." method="_on_display_type_option_button_item_selected"]
 [connection signal="toggled" from="Background/MarginContainer/Settings/HBoxShowOff/UnlitSegmentsCheckbox" to="." method="_on_unlit_segments_checkbox_toggled"]
+[connection signal="toggled" from="Background/MarginContainer/Settings/HBoxShowSeconds/ShowSecondsCheckbox" to="." method="_on_show_seconds_checkbox_toggled"]
 [connection signal="toggled" from="Background/MarginContainer/Settings/HBoxAlwaysOnTop/AlwaysOnTopCheckbox" to="." method="_on_always_on_top_checkbox_toggled"]

@@ -1,0 +1,207 @@
+[gd_scene format=3 uid="uid://c8nrsvxatuyhd"]
+
+[ext_resource type="Script" uid="uid://jm8i6652j64e" path="res://Scripts/main.gd" id="1_b3802"]
+[ext_resource type="Texture2D" uid="uid://c7j1psfjgl2pu" path="res://Icons/PlayButton.svg" id="2_fevyy"]
+[ext_resource type="Texture2D" uid="uid://30x5sxwsv151" path="res://Icons/PauseButton.svg" id="3_hibaj"]
+[ext_resource type="Script" uid="uid://bqav2kwjmehkf" path="res://Scripts/draggable.gd" id="4_pdsj5"]
+[ext_resource type="Texture2D" uid="uid://1vutdcm3s7mm" path="res://Icons/StopButton.svg" id="5_ee4r6"]
+[ext_resource type="Texture2D" uid="uid://btwpx6nbhlnnc" path="res://Icons/ClockButton.svg" id="6_gt3je"]
+[ext_resource type="PackedScene" uid="uid://bmvxpyefy5ihe" path="res://Scenes/task_timer.tscn" id="7_3pmx8"]
+[ext_resource type="Shader" uid="uid://dfca1rqt07xlt" path="res://Displays/7SegmentDisplay/7_segment.gdshader" id="8_u50mg"]
+[ext_resource type="Texture2D" uid="uid://0six1v76axg3" path="res://Displays/texture_atlas.png" id="9_cbgmd"]
+[ext_resource type="Shader" uid="uid://b6up5wgfim448" path="res://Displays/14SegmentDisplay/14_segment.gdshader" id="10_1w6v2"]
+[ext_resource type="Texture2D" uid="uid://cay3cx7m6ycjx" path="res://Icons/ListButton.svg" id="11_ueoa1"]
+[ext_resource type="Texture2D" uid="uid://4mknea08ggfl" path="res://Icons/SettingsButton.svg" id="12_6vcvc"]
+[ext_resource type="Texture2D" uid="uid://byllhofhpqkfs" path="res://Icons/MinimizeButton.svg" id="13_7k868"]
+[ext_resource type="Texture2D" uid="uid://d0cavs0ms5itf" path="res://Icons/CloseAppButton.svg" id="14_hpc6h"]
+[ext_resource type="PackedScene" uid="uid://bg10tcirfjt2m" path="res://Scenes/settings_panel.tscn" id="15_kltya"]
+[ext_resource type="PackedScene" uid="uid://d172ayshc1gb8" path="res://Scenes/entry_list.tscn" id="16_e08e2"]
+[ext_resource type="Script" uid="uid://chlge7jq1sodk" path="res://Scripts/system_tray.gd" id="17_neg2b"]
+[ext_resource type="Texture2D" uid="uid://1f0gp20mi1ip" path="res://icon.png" id="18_r33sp"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b3802"]
+resource_local_to_scene = true
+resource_name = "Material"
+shader = ExtResource("8_u50mg")
+shader_parameter/digit_color = Color(0.72, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("9_cbgmd")
+shader_parameter/bitmask = 118
+shader_parameter/UV_OFFSET1 = Vector2(0, 0)
+shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
+shader_parameter/UV_OFFSET2 = Vector2(0.992, 0)
+shader_parameter/UV_SCALE2 = Vector2(0.151, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fevyy"]
+resource_local_to_scene = true
+resource_name = "Material"
+shader = ExtResource("10_1w6v2")
+shader_parameter/digit_color = Color(0.72, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("9_cbgmd")
+shader_parameter/bitmask = 32767
+shader_parameter/UV_OFFSET1 = Vector2(2.004, 0)
+shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
+shader_parameter/UV_OFFSET2 = Vector2(3.004, 0)
+shader_parameter/UV_SCALE2 = Vector2(0.151, 1)
+
+[node name="Main" type="Control" unique_id=1237992629]
+oversampling_with_scale = 2
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 1
+script = ExtResource("1_b3802")
+settings_file_path = "user://settings_data_dev.json"
+play_icon = ExtResource("2_fevyy")
+pause_icon = ExtResource("3_hibaj")
+
+[node name="TimerAndButtons" type="VBoxContainer" parent="." unique_id=765918811]
+layout_mode = 1
+offset_right = 637.0
+offset_bottom = 188.0
+mouse_filter = 0
+script = ExtResource("4_pdsj5")
+
+[node name="TimerAndSideButtons" type="HBoxContainer" parent="TimerAndButtons" unique_id=1630515425]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="ButtonsVBox" type="VBoxContainer" parent="TimerAndButtons/TimerAndSideButtons" unique_id=224585707]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 4
+
+[node name="PlayPauseButton" type="Button" parent="TimerAndButtons/TimerAndSideButtons/ButtonsVBox" unique_id=720547510]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+tooltip_text = "Start / Pause"
+toggle_mode = true
+icon = ExtResource("2_fevyy")
+
+[node name="StopButton" type="Button" parent="TimerAndButtons/TimerAndSideButtons/ButtonsVBox" unique_id=285193584]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+tooltip_text = "Stop Task"
+icon = ExtResource("5_ee4r6")
+
+[node name="ShowClockButton" type="Button" parent="TimerAndButtons/TimerAndSideButtons/ButtonsVBox" unique_id=419802243]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+tooltip_text = "Show Current Time"
+toggle_mode = true
+icon = ExtResource("6_gt3je")
+
+[node name="TaskTimer" parent="TimerAndButtons/TimerAndSideButtons" unique_id=735116144 instance=ExtResource("7_3pmx8")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+mouse_filter = 1
+material_7_segment = SubResource("ShaderMaterial_b3802")
+material_14_segment = SubResource("ShaderMaterial_fevyy")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TimerAndButtons" unique_id=1056204098]
+layout_mode = 2
+
+[node name="ButtonsHBox" type="HBoxContainer" parent="TimerAndButtons/VBoxContainer" unique_id=1075399920]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TaskDescriptionLineEdit" type="LineEdit" parent="TimerAndButtons/VBoxContainer/ButtonsHBox" unique_id=16555986]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Current Task Description"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_selected_color = Color(0.82, 0.95800006, 1, 1)
+theme_override_constants/caret_width = 2
+theme_override_font_sizes/font_size = 22
+placeholder_text = "  Task Description"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TimerAndButtons/VBoxContainer" unique_id=158158771]
+layout_mode = 2
+
+[node name="ShowListButton" type="Button" parent="TimerAndButtons/VBoxContainer/HBoxContainer" unique_id=917045471]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Show Task List"
+toggle_mode = true
+icon = ExtResource("11_ueoa1")
+
+[node name="ShowSettingsButton" type="Button" parent="TimerAndButtons/VBoxContainer/HBoxContainer" unique_id=1231767321]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Show Settings Panel"
+toggle_mode = true
+icon = ExtResource("12_6vcvc")
+
+[node name="MinimizeAppButton" type="Button" parent="TimerAndButtons/VBoxContainer/HBoxContainer" unique_id=1878388067]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+tooltip_text = "Minimize"
+icon = ExtResource("13_7k868")
+
+[node name="ExitAppButton" type="Button" parent="TimerAndButtons/VBoxContainer/HBoxContainer" unique_id=1371751418]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+tooltip_text = "Exit"
+icon = ExtResource("14_hpc6h")
+
+[node name="SettingsPanel" parent="." unique_id=1190921543 instance=ExtResource("15_kltya")]
+visible = false
+layout_mode = 0
+offset_left = 196.0
+offset_top = 235.0
+offset_right = 416.0
+offset_bottom = 430.0
+
+[node name="EntryList" parent="." unique_id=2044402737 instance=ExtResource("16_e08e2")]
+visible = false
+layout_mode = 0
+offset_left = 468.0
+offset_top = 237.0
+offset_right = 788.0
+offset_bottom = 637.0
+
+[node name="HoverTimer" type="Timer" parent="." unique_id=1849731028]
+wait_time = 3.5
+one_shot = true
+autostart = true
+
+[node name="AutosaveTimer" type="Timer" parent="." unique_id=1010088092]
+wait_time = 60.0
+autostart = true
+
+[node name="SystemTray" type="Node" parent="." unique_id=958586213]
+script = ExtResource("17_neg2b")
+tray_icon = ExtResource("18_r33sp")
+
+[node name="PopupMenu" type="PopupMenu" parent="SystemTray" unique_id=26875357]
+oversampling_override = 1.0
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
+[connection signal="gui_input" from="TimerAndButtons" to="TimerAndButtons" method="_on_gui_input"]
+[connection signal="toggled" from="TimerAndButtons/TimerAndSideButtons/ButtonsVBox/PlayPauseButton" to="." method="_on_play_pause_button_toggled"]
+[connection signal="pressed" from="TimerAndButtons/TimerAndSideButtons/ButtonsVBox/StopButton" to="." method="_on_stop_button_pressed"]
+[connection signal="toggled" from="TimerAndButtons/TimerAndSideButtons/ButtonsVBox/ShowClockButton" to="." method="_on_show_clock_button_toggled"]
+[connection signal="editing_toggled" from="TimerAndButtons/VBoxContainer/ButtonsHBox/TaskDescriptionLineEdit" to="." method="_on_line_edit_editing_toggled"]
+[connection signal="text_changed" from="TimerAndButtons/VBoxContainer/ButtonsHBox/TaskDescriptionLineEdit" to="." method="_on_task_description_line_edit_text_changed"]
+[connection signal="toggled" from="TimerAndButtons/VBoxContainer/HBoxContainer/ShowListButton" to="." method="_on_show_list_button_toggled"]
+[connection signal="toggled" from="TimerAndButtons/VBoxContainer/HBoxContainer/ShowSettingsButton" to="." method="_on_show_settings_button_toggled"]
+[connection signal="pressed" from="TimerAndButtons/VBoxContainer/HBoxContainer/MinimizeAppButton" to="." method="_on_minimize_app_button_pressed"]
+[connection signal="pressed" from="TimerAndButtons/VBoxContainer/HBoxContainer/ExitAppButton" to="." method="_on_exit_app_button_pressed"]
+[connection signal="timeout" from="HoverTimer" to="." method="_on_hover_timer_timeout"]
+[connection signal="timeout" from="AutosaveTimer" to="." method="_on_autosave_timer_timeout"]

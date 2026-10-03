@@ -1,0 +1,108 @@
+[gd_scene format=3 uid="uid://ntsmuhtbjyk5"]
+
+[ext_resource type="Script" uid="uid://box4ahu4iyyc2" path="res://Scripts/week_summary.gd" id="1_vvcu7"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_1dosr"]
+font_size = 12
+
+[sub_resource type="LabelSettings" id="LabelSettings_vvcu7"]
+font_size = 12
+
+[node name="Control" type="Control" unique_id=2058731354]
+custom_minimum_size = Vector2(310, 90)
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_right = -842.0
+offset_bottom = 90.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+mouse_filter = 1
+script = ExtResource("1_vvcu7")
+
+[node name="Background" type="Panel" parent="." unique_id=617196788]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1873587123]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1244250967]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1209560953]
+layout_mode = 2
+
+[node name="Date" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=474246234]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Date"
+text_overrun_behavior = 3
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=2118201967]
+layout_mode = 2
+
+[node name="ActiveTime" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1212686385]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Active"
+label_settings = SubResource("LabelSettings_1dosr")
+
+[node name="BreakTime" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1750220643]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Break"
+label_settings = SubResource("LabelSettings_1dosr")
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=411839789]
+layout_mode = 2
+
+[node name="ExcludeWeekendsAverage" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer3" unique_id=2061433684]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 1
+text = "Exclude weekend average"
+label_settings = SubResource("LabelSettings_vvcu7")
+
+[node name="ActiveDaysNumber" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer3" unique_id=2006008402]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Active day number"
+label_settings = SubResource("LabelSettings_vvcu7")
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1561896103]
+layout_mode = 2
+
+[node name="EveryDayAverage" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer4" unique_id=838683187]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Every day average"
+label_settings = SubResource("LabelSettings_vvcu7")
+
+[node name="ActiveDaysAverage" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer4" unique_id=91546941]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Active day average"
+label_settings = SubResource("LabelSettings_vvcu7")

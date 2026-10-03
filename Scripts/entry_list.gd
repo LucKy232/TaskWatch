@@ -1,14 +1,28 @@
 class_name EntryList extends Control
 
-@export_file("*.tscn") var entry_scene
-@export_file("*.tscn") var day_summary_scene
+@export var button_animation_time: float = 0.2
 @onready var project_name: LineEdit = %ProjectName
 @onready var scroll_container: ScrollContainer = %ScrollContainer
 @onready var entries_container: VBoxContainer = %EntriesContainer
+@onready var scroll_to_bottom_timer: Timer = $ScrollToBottomTimer
+# ViewMode Buttons
+@onready var view_all_button: Button = %ViewAll
+@onready var view_today_button: Button = %ViewToday
+@onready var view_this_week_button: Button = %ViewThisWeek
+@onready var view_this_month_button: Button = %ViewThisMonth
+@onready var view_last_7_button: Button = %ViewLast7
+@onready var view_last_30_button: Button = %ViewLast30
+@onready var view_summary_daily_button: Button = %ViewSummaryDaily
+@onready var view_summary_weekly_button: Button = %ViewSummaryWeekly
+@onready var view_summary_monthly_button: Button = %ViewSummaryMonthly
 var entries: Dictionary[int, Entry]
 var summaries_day: Dictionary[String, DaySummary]
+var summaries_week: Dictionary[String, WeekSummary]
+var summaries_month: Dictionary[String, MonthSummary]
 var latest_entry_id: int
 var view_mode: ViewMode
+var button_on_tween: Tween
+var button_off_tween: Tween
 
 signal project_name_changed
 
@@ -17,64 +31,20 @@ enum ViewMode {
 	TODAY,
 	THIS_WEEK,
 	THIS_MONTH,
+	LAST_7,
+	LAST_30,
 	DAY_SUMMARY,
 	WEEK_SUMMARY,
 	MONTH_SUMMARY,
-	TOTAL_SUMMARY,
 }
 
 
 func _ready() -> void:
-	visible = true
-	scroll_to_bottom()
-	visible = false
-
-
-# TODO buttons instead
-func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed("toggle_summaries"):
-		var show_summaries_day: bool = false
-		if view_mode == ViewMode.ALL:
-			view_mode = ViewMode.DAY_SUMMARY
-			show_summaries_day = true
-		elif view_mode == ViewMode.DAY_SUMMARY:
-			view_mode = ViewMode.ALL
-		
-		for eid in entries:
-			entries[eid].visible = !show_summaries_day
-		for s in summaries_day:
-			summaries_day[s].visible = show_summaries_day
-	if Input.is_action_just_pressed("build_summaries"):
-		clear_summaries_day()
-		build_summaries_day()
-
-
-func clear_summaries_day() -> void:
-	for d in summaries_day:
-		summaries_day[d].queue_free()
-	summaries_day.clear()
-
-
-# TODO only clear and rebuild today
-func build_summaries_day() -> void:
-	#var today: String = Time.get_date_string_from_system()
-	for eid in entries:
-		var date: String = entries[eid].start_datetime.split(" ")[0]
-		if !summaries_day.has(date):
-			var new: DaySummary = load(day_summary_scene).instantiate() as DaySummary
-			entries_container.add_child(new)
-			new.set_date(date)
-			new.add_active_duration(entries[eid].duration)
-			new.add_break_duration(entries[eid].break_duration)
-			new.visible = bool(view_mode == ViewMode.DAY_SUMMARY)
-			summaries_day[date] = new
-		else:
-			summaries_day[date].add_active_duration(entries[eid].duration)
-			summaries_day[date].add_break_duration(entries[eid].break_duration)
+	view_all_button.set_pressed_no_signal(true)
 
 
 func new_entry() -> int:
-	var new: Entry = load(entry_scene).instantiate() as Entry
+	var new: Entry = load(E.ENTRY_SCENE).instantiate() as Entry
 	entries_container.add_child(new)
 	var eid: int = entries.size()
 	new.id = eid
@@ -90,11 +60,15 @@ func populate_entries_from_dict(dict: Dictionary) -> void:
 		var eid: int = new_entry()
 		entries[eid].set_data_from_json(dict["Entries"][e])
 		entries[eid].visible = bool(view_mode == ViewMode.ALL || view_mode == ViewMode.TODAY || view_mode == ViewMode.THIS_WEEK || view_mode == ViewMode.THIS_MONTH)
-	call_deferred("scroll_to_bottom")
 
 
-func scroll_to_bottom() -> void:
-	scroll_container.get_v_scroll_bar().ratio = 1.0
+func build_all_summaries() -> void:
+	clear_summaries_day()
+	clear_summaries_week()
+	clear_summaries_month()
+	build_summaries_day()
+	build_summaries_week()
+	build_summaries_month()
 
 
 func new_entry_from_task(task: Task) -> void:
@@ -105,7 +79,7 @@ func new_entry_from_task(task: Task) -> void:
 	entries[eid].set_start_datetime(task.start_datetime)
 	entries[eid].set_end_datetime(task.end_datetime)
 	entries[eid].visible = bool(view_mode == ViewMode.ALL || view_mode == ViewMode.TODAY || view_mode == ViewMode.THIS_WEEK || view_mode == ViewMode.THIS_MONTH)
-	call_deferred("scroll_to_bottom")
+	scroll_to_bottom_timer.start()
 
 
 func set_entry_data(eid: int, entry_dict: Dictionary) -> void:
@@ -129,6 +103,169 @@ func erase_latest_entry() -> void:
 	latest_entry_id = -1
 
 
+func change_view_mode(previous: ViewMode) -> void:
+	hide_previous_summaries(previous)
+	match view_mode:
+		ViewMode.ALL:
+			for eid in entries:
+				entries[eid].visible = true
+		ViewMode.TODAY:
+			var today_date: Dictionary = Time.get_date_dict_from_system()
+			var today: int = today_date["day"]
+			var this_month: int = today_date["month"]
+			var this_year: int = today_date["year"]
+			for eid in entries:
+				var datetime: Dictionary = Time.get_datetime_dict_from_datetime_string(entries[eid].start_datetime, false)
+				var entry_day: int = datetime["day"]
+				var entry_month: int = datetime["month"]
+				var entry_year: int = datetime["year"]
+				entries[eid].visible = bool(today == entry_day and this_month == entry_month and this_year == entry_year)
+		ViewMode.THIS_WEEK:
+			var today_date: Dictionary = Time.get_date_dict_from_system()
+			var today_week_day: int = today_date["weekday"]
+			for eid in entries:
+				var datetime: Dictionary = Time.get_datetime_dict_from_datetime_string(entries[eid].start_datetime, false)
+				entries[eid].visible = Formatter.less_than_days_ago(datetime, today_date, today_week_day - 1)
+		ViewMode.THIS_MONTH:
+			var today_date: Dictionary = Time.get_date_dict_from_system()
+			var this_month: int = today_date["month"]
+			var this_year: int = today_date["year"]
+			for eid in entries:
+				var datetime: Dictionary = Time.get_datetime_dict_from_datetime_string(entries[eid].start_datetime, false)
+				var entry_month: int = datetime["month"]
+				var entry_year: int = datetime["year"]
+				entries[eid].visible = bool(this_month == entry_month and this_year == entry_year)
+		ViewMode.LAST_7:
+			var today_date: Dictionary = Time.get_date_dict_from_system()
+			for eid in entries:
+				var datetime: Dictionary = Time.get_datetime_dict_from_datetime_string(entries[eid].start_datetime, false)
+				entries[eid].visible = Formatter.less_than_days_ago(datetime, today_date, 6)
+		ViewMode.LAST_30:
+			var today_date: Dictionary = Time.get_date_dict_from_system()
+			for eid in entries:
+				var datetime: Dictionary = Time.get_datetime_dict_from_datetime_string(entries[eid].start_datetime, false)
+				entries[eid].visible = Formatter.less_than_days_ago(datetime, today_date, 29)
+		ViewMode.DAY_SUMMARY:
+			for eid in entries:
+				entries[eid].visible = false
+			for s in summaries_day:
+				summaries_day[s].visible = true
+		ViewMode.WEEK_SUMMARY:
+			for eid in entries:
+				entries[eid].visible = false
+			for w in summaries_week:
+				summaries_week[w].visible = true
+		ViewMode.MONTH_SUMMARY:
+			for eid in entries:
+				entries[eid].visible = false
+			for m in summaries_month:
+				summaries_month[m].visible = true
+
+
+func hide_previous_summaries(previous_view: ViewMode) -> void:
+	match previous_view:
+		ViewMode.DAY_SUMMARY:
+			for d in summaries_day:
+				summaries_day[d].visible = false
+		ViewMode.WEEK_SUMMARY:
+			for w in summaries_week:
+				summaries_week[w].visible = false
+		ViewMode.MONTH_SUMMARY:
+			for m in summaries_month:
+				summaries_month[m].visible = false
+
+
+func build_summaries_day() -> void:
+	for eid in entries:
+		var date_string: String = entries[eid].start_datetime.split(" ")[0]
+		if !summaries_day.has(date_string):
+			var new: DaySummary = load(E.DAY_SUMMARY_SCENE).instantiate() as DaySummary
+			entries_container.add_child(new)
+			new.name = "DaySummary"
+			new.set_date(date_string)
+			new.add_active_duration(entries[eid].duration)
+			new.add_break_duration(entries[eid].break_duration)
+			new.visible = bool(view_mode == ViewMode.DAY_SUMMARY)
+			summaries_day[date_string] = new
+		else:
+			summaries_day[date_string].add_active_duration(entries[eid].duration)
+			summaries_day[date_string].add_break_duration(entries[eid].break_duration)
+
+
+func build_summaries_week() -> void:
+	var today_date: Dictionary = Time.get_date_dict_from_system()
+	for eid in entries:
+		var date_dict: Dictionary = Time.get_datetime_dict_from_datetime_string(entries[eid].start_datetime, true)
+		var week_dict: Dictionary = Formatter.get_week_start_dict(date_dict)
+		var week_string: String = str("%d-%d-%d" % [week_dict["year"], week_dict["month"], week_dict["day"]])
+		if !summaries_week.has(week_string):
+			var new: WeekSummary = load(E.WEEK_SUMMARY_SCENE).instantiate() as WeekSummary
+			entries_container.add_child(new)
+			new.name = "WeekSummary"
+			new.set_date(week_string)
+			var days_passed: Vector2i = Formatter.get_week_days_passed(today_date, week_dict)
+			new.set_days_passed(days_passed.x, days_passed.y)
+			new.visible = bool(view_mode == ViewMode.WEEK_SUMMARY)
+			summaries_week[week_string] = new
+		summaries_week[week_string].add_active_duration(entries[eid].duration)
+		summaries_week[week_string].add_break_duration(entries[eid].break_duration)
+		summaries_week[week_string].add_active_day(date_dict["weekday"])
+
+
+func build_summaries_month() -> void:
+	var today_date: Dictionary = Time.get_date_dict_from_system()
+	for eid in entries:
+		var date_dict: Dictionary = Time.get_datetime_dict_from_datetime_string(entries[eid].start_datetime, true)
+		var date_string: String = entries[eid].start_datetime.split(" ")[0]
+		var month_string: String = str("%s-%s" % [date_string.split("-")[0], date_string.split("-")[1]])
+		if !summaries_month.has(month_string):
+			var new: MonthSummary = load(E.MONTH_SUMMARY_SCENE).instantiate() as MonthSummary
+			entries_container.add_child(new)
+			new.name = "MonthSummary"
+			new.set_date(date_string)
+			var days_passed: Vector2i = Formatter.get_month_days_passed(today_date, date_dict)
+			new.set_days_passed(days_passed.x, days_passed.y)
+			new.visible = bool(view_mode == ViewMode.MONTH_SUMMARY)
+			summaries_month[month_string] = new
+		summaries_month[month_string].add_active_duration(entries[eid].duration)
+		summaries_month[month_string].add_break_duration(entries[eid].break_duration)
+		summaries_month[month_string].add_active_day(date_dict["day"])
+
+
+func clear_summaries_day() -> void:
+	for d in summaries_day:
+		summaries_day[d].queue_free()
+	summaries_day.clear()
+
+
+func clear_summaries_week() -> void:
+	for w in summaries_week:
+		summaries_week[w].queue_free()
+	summaries_week.clear()
+
+
+func clear_summaries_month() -> void:
+	for m in summaries_month:
+		summaries_month[m].queue_free()
+	summaries_month.clear()
+
+
+func toggle_button_on_tween(button: Button) -> void:
+	if button_on_tween and button_on_tween.is_running():
+		button_on_tween.custom_step(button_animation_time)
+		button_on_tween.stop()
+	button_on_tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_ELASTIC)
+	button_on_tween.tween_property(button, "offset_transform_position_ratio:y", 0.3, button_animation_time)
+
+
+func toggle_button_off_tween(button: Button) -> void:
+	if button_off_tween and button_off_tween.is_running():
+		button_off_tween.custom_step(button_animation_time)
+		button_off_tween.stop()
+	button_off_tween = create_tween().set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_CUBIC)
+	button_off_tween.tween_property(button, "offset_transform_position_ratio:y", 0.0, button_animation_time)
+
+
 func _on_entry_erased(id: int) -> void:
 	if !entries.has(id):
 		print("No id")
@@ -139,3 +276,113 @@ func _on_entry_erased(id: int) -> void:
 
 func _on_project_name_text_changed(new_text: String) -> void:
 	project_name_changed.emit(new_text)
+
+
+func _on_view_all_toggled(toggled_on: bool) -> void:
+	var previous: ViewMode = view_mode
+	if toggled_on and previous != ViewMode.ALL:
+		view_mode = ViewMode.ALL
+		change_view_mode(previous)
+		toggle_button_on_tween(view_all_button)
+	if !toggled_on:
+		toggle_button_off_tween(view_all_button)
+	scroll_to_bottom_timer.start()
+
+
+func _on_view_today_toggled(toggled_on: bool) -> void:
+	var previous: ViewMode = view_mode
+	if toggled_on and previous != ViewMode.TODAY:
+		view_mode = ViewMode.TODAY
+		change_view_mode(previous)
+		toggle_button_on_tween(view_today_button)
+	if !toggled_on:
+		toggle_button_off_tween(view_today_button)
+	scroll_to_bottom_timer.start()
+
+
+func _on_view_this_week_toggled(toggled_on: bool) -> void:
+	var previous: ViewMode = view_mode
+	if toggled_on and previous != ViewMode.THIS_WEEK:
+		view_mode = ViewMode.THIS_WEEK
+		change_view_mode(previous)
+		toggle_button_on_tween(view_this_week_button)
+	if !toggled_on:
+		toggle_button_off_tween(view_this_week_button)
+	scroll_to_bottom_timer.start()
+
+
+func _on_view_this_month_toggled(toggled_on: bool) -> void:
+	var previous: ViewMode = view_mode
+	if toggled_on and previous != ViewMode.THIS_MONTH:
+		view_mode = ViewMode.THIS_MONTH
+		change_view_mode(previous)
+		toggle_button_on_tween(view_this_month_button)
+	if !toggled_on:
+		toggle_button_off_tween(view_this_month_button)
+	scroll_to_bottom_timer.start()
+
+
+func _on_view_last_7_toggled(toggled_on: bool) -> void:
+	var previous: ViewMode = view_mode
+	if toggled_on and previous != ViewMode.LAST_7:
+		view_mode = ViewMode.LAST_7
+		change_view_mode(previous)
+		toggle_button_on_tween(view_last_7_button)
+	if !toggled_on:
+		toggle_button_off_tween(view_last_7_button)
+	scroll_to_bottom_timer.start()
+
+
+func _on_view_last_30_toggled(toggled_on: bool) -> void:
+	var previous: ViewMode = view_mode
+	if toggled_on and previous != ViewMode.LAST_30:
+		view_mode = ViewMode.LAST_30
+		change_view_mode(previous)
+		toggle_button_on_tween(view_last_30_button)
+	if !toggled_on:
+		toggle_button_off_tween(view_last_30_button)
+	scroll_to_bottom_timer.start()
+
+
+func _on_view_summary_daily_toggled(toggled_on: bool) -> void:
+	var previous: ViewMode = view_mode
+	if toggled_on and previous != ViewMode.DAY_SUMMARY:
+		view_mode = ViewMode.DAY_SUMMARY
+		change_view_mode(previous)
+		toggle_button_on_tween(view_summary_daily_button)
+	if !toggled_on:
+		toggle_button_off_tween(view_summary_daily_button)
+	scroll_to_bottom_timer.start()
+
+
+func _on_view_summary_weekly_toggled(toggled_on: bool) -> void:
+	var previous: ViewMode = view_mode
+	if toggled_on and previous != ViewMode.WEEK_SUMMARY:
+		view_mode = ViewMode.WEEK_SUMMARY
+		change_view_mode(previous)
+		toggle_button_on_tween(view_summary_weekly_button)
+	if !toggled_on:
+		toggle_button_off_tween(view_summary_weekly_button)
+	scroll_to_bottom_timer.start()
+
+
+func _on_view_summary_monthly_toggled(toggled_on: bool) -> void:
+	var previous: ViewMode = view_mode
+	if toggled_on and previous != ViewMode.MONTH_SUMMARY:
+		view_mode = ViewMode.MONTH_SUMMARY
+		change_view_mode(previous)
+		toggle_button_on_tween(view_summary_monthly_button)
+	if !toggled_on:
+		toggle_button_off_tween(view_summary_monthly_button)
+	scroll_to_bottom_timer.start()
+
+
+## Can't scroll to the bottom of the ScrollContainer if changing its size in the same frame / deferred
+## wait with timer for its attributes to be set
+func _on_scroll_to_bottom_timer_timeout() -> void:
+	scroll_container.set_deferred("scroll_vertical", scroll_container.get_v_scroll_bar().max_value)
+
+
+func _on_visibility_changed() -> void:
+	if visible:
+		scroll_to_bottom_timer.start()
