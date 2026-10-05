@@ -2,10 +2,15 @@
 
 [ext_resource type="Script" uid="uid://smht4qy1ir8r" path="res://Scripts/task_timer.gd" id="1_7m88h"]
 [ext_resource type="Material" uid="uid://dldpc106ogwuf" path="res://Displays/7SegmentDisplay/7_segment_material.tres" id="2_bryrl"]
+[ext_resource type="Material" uid="uid://c5aum78fgqqjp" path="res://Displays/dots_material.tres" id="2_ja6c5"]
 [ext_resource type="Material" uid="uid://usuq5ki65ndg" path="res://Displays/14SegmentDisplay/14_segment_material.tres" id="3_ccp8i"]
+[ext_resource type="Material" uid="uid://cdm7k4pi7itoa" path="res://Displays/DotMatrixDisplay/dot_matrix_6x5_material.tres" id="4_bryrl"]
 [ext_resource type="PackedScene" uid="uid://vfjqcewlnjup" path="res://Displays/7SegmentDisplay/7_segment.tscn" id="4_ja6c5"]
 [ext_resource type="Material" uid="uid://bm08tf4ehtc0r" path="res://Displays/DotMatrixDisplay/dot_matrix_3x5_material.tres" id="4_u4076"]
+[ext_resource type="Shader" uid="uid://dfca1rqt07xlt" path="res://Displays/7SegmentDisplay/7_segment.gdshader" id="6_ccp8i"]
 [ext_resource type="PackedScene" uid="uid://cjargy4b0st5h" path="res://Displays/dots.tscn" id="7_2j05i"]
+[ext_resource type="Texture2D" uid="uid://cftgdhlchuue5" path="res://Displays/texture_atlas.png" id="7_ja6c5"]
+[ext_resource type="Shader" uid="uid://dexvgpvdbx7xj" path="res://Displays/dots.gdshader" id="9_peuc8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1ugkr"]
 content_margin_left = 18.0
@@ -19,6 +24,104 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 corner_detail = 5
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_peuc8"]
+resource_local_to_scene = true
+resource_name = "Material"
+shader = ExtResource("6_ccp8i")
+shader_parameter/digit_color = Color(0.72, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("7_ja6c5")
+shader_parameter/bitmask = 118
+shader_parameter/UV_OFFSET1 = Vector2(0, 0)
+shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
+shader_parameter/UV_OFFSET2 = Vector2(0.992, 0)
+shader_parameter/UV_SCALE2 = Vector2(0.151, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_i8g7d"]
+resource_local_to_scene = true
+resource_name = "Material"
+shader = ExtResource("6_ccp8i")
+shader_parameter/digit_color = Color(0.72, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("7_ja6c5")
+shader_parameter/bitmask = 118
+shader_parameter/UV_OFFSET1 = Vector2(0, 0)
+shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
+shader_parameter/UV_OFFSET2 = Vector2(0.992, 0)
+shader_parameter/UV_SCALE2 = Vector2(0.151, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2j05i"]
+resource_local_to_scene = true
+shader = ExtResource("9_peuc8")
+shader_parameter/digit_color = Color(0.72156864, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72156864, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("7_ja6c5")
+shader_parameter/lit = true
+shader_parameter/UV_OFFSET = Vector2(23.935, 0)
+shader_parameter/UV_SCALE = Vector2(0.04, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6oimk"]
+resource_local_to_scene = true
+resource_name = "Material"
+shader = ExtResource("6_ccp8i")
+shader_parameter/digit_color = Color(0.72, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("7_ja6c5")
+shader_parameter/bitmask = 118
+shader_parameter/UV_OFFSET1 = Vector2(0, 0)
+shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
+shader_parameter/UV_OFFSET2 = Vector2(0.992, 0)
+shader_parameter/UV_SCALE2 = Vector2(0.151, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mg5w2"]
+resource_local_to_scene = true
+resource_name = "Material"
+shader = ExtResource("6_ccp8i")
+shader_parameter/digit_color = Color(0.72, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("7_ja6c5")
+shader_parameter/bitmask = 118
+shader_parameter/UV_OFFSET1 = Vector2(0, 0)
+shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
+shader_parameter/UV_OFFSET2 = Vector2(0.992, 0)
+shader_parameter/UV_SCALE2 = Vector2(0.151, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tt7o7"]
+resource_local_to_scene = true
+shader = ExtResource("9_peuc8")
+shader_parameter/digit_color = Color(0.72156864, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72156864, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("7_ja6c5")
+shader_parameter/lit = true
+shader_parameter/UV_OFFSET = Vector2(23.935, 0)
+shader_parameter/UV_SCALE = Vector2(0.04, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bceay"]
+resource_local_to_scene = true
+resource_name = "Material"
+shader = ExtResource("6_ccp8i")
+shader_parameter/digit_color = Color(0.72, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("7_ja6c5")
+shader_parameter/bitmask = 118
+shader_parameter/UV_OFFSET1 = Vector2(0, 0)
+shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
+shader_parameter/UV_OFFSET2 = Vector2(0.992, 0)
+shader_parameter/UV_SCALE2 = Vector2(0.151, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2gkmr"]
+resource_local_to_scene = true
+resource_name = "Material"
+shader = ExtResource("6_ccp8i")
+shader_parameter/digit_color = Color(0.72, 0, 0, 1)
+shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
+shader_parameter/texture_mask = ExtResource("7_ja6c5")
+shader_parameter/bitmask = 118
+shader_parameter/UV_OFFSET1 = Vector2(0, 0)
+shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
+shader_parameter/UV_OFFSET2 = Vector2(0.992, 0)
+shader_parameter/UV_SCALE2 = Vector2(0.151, 1)
+
 [node name="TaskTimer" type="PanelContainer" unique_id=735116144 node_paths=PackedStringArray("segments")]
 offset_right = 588.0
 offset_bottom = 148.0
@@ -26,45 +129,58 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_1ugkr")
 script = ExtResource("1_7m88h")
+dots_material = ExtResource("2_ja6c5")
 material_7_segment = ExtResource("2_bryrl")
 material_14_segment = ExtResource("3_ccp8i")
-material_dot3x5_segment = ExtResource("4_u4076")
+material_dot3x5 = ExtResource("4_u4076")
+material_dot6x5 = ExtResource("4_bryrl")
 segments = [NodePath("HBoxContainer/Segment1"), NodePath("HBoxContainer/Segment2"), NodePath("HBoxContainer/Segment3"), NodePath("HBoxContainer/Segment4"), NodePath("HBoxContainer/Segment5"), NodePath("HBoxContainer/Segment6")]
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1532034494]
 layout_mode = 2
 size_flags_horizontal = 0
+theme_override_constants/separation = 0
 
 [node name="Segment1" parent="HBoxContainer" unique_id=1338123524 instance=ExtResource("4_ja6c5")]
+material = SubResource("ShaderMaterial_peuc8")
 layout_mode = 2
 mouse_filter = 1
 
 [node name="Segment2" parent="HBoxContainer" unique_id=1250928915 instance=ExtResource("4_ja6c5")]
+material = SubResource("ShaderMaterial_i8g7d")
 layout_mode = 2
 mouse_filter = 1
 
 [node name="Dots1" parent="HBoxContainer" unique_id=402741285 instance=ExtResource("7_2j05i")]
+material = SubResource("ShaderMaterial_2j05i")
 layout_mode = 2
-offset_transform_rotation = 0.05235988
+offset_transform_enabled = true
+offset_transform_rotation = 0.06981317
 mouse_filter = 1
 
 [node name="Segment3" parent="HBoxContainer" unique_id=649743435 instance=ExtResource("4_ja6c5")]
+material = SubResource("ShaderMaterial_6oimk")
 layout_mode = 2
 mouse_filter = 1
 
 [node name="Segment4" parent="HBoxContainer" unique_id=695576513 instance=ExtResource("4_ja6c5")]
+material = SubResource("ShaderMaterial_mg5w2")
 layout_mode = 2
 mouse_filter = 1
 
 [node name="Dots2" parent="HBoxContainer" unique_id=1453833277 instance=ExtResource("7_2j05i")]
+material = SubResource("ShaderMaterial_tt7o7")
 layout_mode = 2
-offset_transform_rotation = 0.05235988
+offset_transform_enabled = true
+offset_transform_rotation = 0.06981317
 mouse_filter = 1
 
 [node name="Segment5" parent="HBoxContainer" unique_id=1512345914 instance=ExtResource("4_ja6c5")]
+material = SubResource("ShaderMaterial_bceay")
 layout_mode = 2
 mouse_filter = 1
 
 [node name="Segment6" parent="HBoxContainer" unique_id=761893806 instance=ExtResource("4_ja6c5")]
+material = SubResource("ShaderMaterial_2gkmr")
 layout_mode = 2
 mouse_filter = 1

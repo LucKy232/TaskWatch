@@ -1,37 +1,40 @@
 [gd_scene format=3 uid="uid://c5okbpeec14hc"]
 
 [ext_resource type="Script" uid="uid://dcst22q2l1ruf" path="res://Scripts/day_summary.gd" id="1_0qxf5"]
+[ext_resource type="Texture2D" uid="uid://bshbg1o1jbwbf" path="res://Icons/ArrowUp.svg" id="2_phgup"]
+[ext_resource type="Texture2D" uid="uid://bgabhose80n8f" path="res://Icons/ArrowDown.svg" id="3_4j7o4"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_553ya"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_1dosr"]
 font_size = 12
 
-[node name="Control" type="Control" unique_id=2058731354]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dvpmy"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_phgup"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wkb4o"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7v3p2"]
+
+[node name="Control" type="PanelContainer" unique_id=1801429487]
 custom_minimum_size = Vector2(310, 53)
-layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
+offset_bottom = 53.0
 grow_horizontal = 2
 size_flags_horizontal = 3
-size_flags_vertical = 0
+size_flags_vertical = 3
 mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxEmpty_553ya")
 script = ExtResource("1_0qxf5")
 
 [node name="Background" type="Panel" parent="." unique_id=617196788]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 mouse_filter = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1873587123]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 8
@@ -65,3 +68,25 @@ layout_mode = 2
 size_flags_horizontal = 10
 text = "Break"
 label_settings = SubResource("LabelSettings_1dosr")
+
+[node name="FullTaskList" type="Label" parent="MarginContainer/VBoxContainer" unique_id=603089466]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+label_settings = SubResource("LabelSettings_1dosr")
+
+[node name="ToggleFullTaskList" type="CheckBox" parent="MarginContainer" unique_id=191213917]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+tooltip_text = "Show Tasks"
+theme_override_styles/normal = SubResource("StyleBoxEmpty_dvpmy")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_phgup")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_wkb4o")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7v3p2")
+theme_override_icons/checked = ExtResource("2_phgup")
+theme_override_icons/unchecked = ExtResource("3_4j7o4")
+
+[connection signal="toggled" from="MarginContainer/ToggleFullTaskList" to="." method="_on_toggle_full_task_list_toggled"]

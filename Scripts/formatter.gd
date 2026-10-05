@@ -207,7 +207,7 @@ static func get_weekend_days_in_month(month_string: String, day_count: int) -> i
 
 static func rewind_date_dict(dict: Dictionary, rewind_days: int) -> Dictionary:
 	if rewind_days > 28:
-		push_error("I wasn't made for this")
+		push_error("I wasn't made for this!")
 	if dict["day"] <= rewind_days:
 		if dict["month"] == 1:
 			dict["year"] -= 1

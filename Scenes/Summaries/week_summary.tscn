@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://ntsmuhtbjyk5"]
 
 [ext_resource type="Script" uid="uid://box4ahu4iyyc2" path="res://Scripts/week_summary.gd" id="1_vvcu7"]
+[ext_resource type="Texture2D" uid="uid://bshbg1o1jbwbf" path="res://Icons/ArrowUp.svg" id="2_ggofm"]
+[ext_resource type="Texture2D" uid="uid://bgabhose80n8f" path="res://Icons/ArrowDown.svg" id="3_u6520"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_553ya"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_1dosr"]
 font_size = 12
@@ -8,9 +12,19 @@ font_size = 12
 [sub_resource type="LabelSettings" id="LabelSettings_vvcu7"]
 font_size = 12
 
-[node name="Control" type="Control" unique_id=2058731354]
+[sub_resource type="LabelSettings" id="LabelSettings_26hcu"]
+font_size = 12
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_67p4x"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gtc0l"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yww44"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_trwfg"]
+
+[node name="Control" type="PanelContainer" unique_id=96652413]
 custom_minimum_size = Vector2(310, 90)
-layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
 offset_right = -842.0
@@ -19,24 +33,15 @@ grow_horizontal = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
 mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxEmpty_553ya")
 script = ExtResource("1_vvcu7")
 
 [node name="Background" type="Panel" parent="." unique_id=617196788]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 mouse_filter = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1873587123]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 8
@@ -106,3 +111,25 @@ layout_mode = 2
 size_flags_horizontal = 10
 text = "Active day average"
 label_settings = SubResource("LabelSettings_vvcu7")
+
+[node name="FullTaskList" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1479760904]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+label_settings = SubResource("LabelSettings_26hcu")
+
+[node name="ToggleFullTaskList" type="CheckBox" parent="MarginContainer" unique_id=1287457776]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+tooltip_text = "Show Tasks"
+theme_override_styles/normal = SubResource("StyleBoxEmpty_67p4x")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_gtc0l")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_yww44")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_trwfg")
+theme_override_icons/checked = ExtResource("2_ggofm")
+theme_override_icons/unchecked = ExtResource("3_u6520")
+
+[connection signal="toggled" from="MarginContainer/ToggleFullTaskList" to="." method="_on_toggle_full_task_list_toggled"]

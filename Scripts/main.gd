@@ -24,6 +24,7 @@ var current_task: Task = Task.new(0)
 
 
 func _ready() -> void:
+	var timer: Stopwatch = Stopwatch.new("Startup time: ")
 	get_tree().set_auto_accept_quit(false)
 	fullscreen_window.call_deferred()
 	maximize_window.call_deferred()
@@ -42,20 +43,25 @@ func _ready() -> void:
 		save_settings_data()
 	else:
 		load_current_project_file()
+		task_description_line_edit.text = entry_list.get_last_entry_task_description()
+	timer.stop()
 
   
 func _process(_delta: float) -> void:
 	if !get_window().has_focus() and top_buttons_control.visible:
 		hide_buttons()
-		
-	if Input.is_action_just_pressed("scale_up", true) and !task_description_line_edit.is_editing():
-		settings_panel.scale_up()
-	if Input.is_action_just_pressed("scale_down", true) and !task_description_line_edit.is_editing():
-		settings_panel.scale_down()
-	if Input.is_action_just_pressed("reset_position", true) and !task_description_line_edit.is_editing():
-		reset_position()
-	if Input.is_action_just_pressed("maximize_window", true) and !task_description_line_edit.is_editing():
-		maximize_window()
+	
+	if !task_description_line_edit.is_editing():
+		if Input.is_action_just_pressed("scale_up", true):
+			settings_panel.scale_up()
+		if Input.is_action_just_pressed("scale_down", true):
+			settings_panel.scale_down()
+		if Input.is_action_just_pressed("reset_position", true):
+			reset_position()
+		if Input.is_action_just_pressed("maximize_window", true):
+			maximize_window()
+		if Input.is_action_just_pressed("hide_buttons", true):
+			hide_buttons()
 	
 	if current_task.is_started:
 		tick_current_task(false)
@@ -63,8 +69,10 @@ func _process(_delta: float) -> void:
 	elif current_task.start_datetime != "":
 		tick_current_task(true)
 		task_timer.state = task_timer.TimerState.PAUSED
-	else:
-		task_timer.state = task_timer.TimerState.STOPPED
+	elif task_timer.state != task_timer.TimerState.STOPPED:
+			task_timer.toggle_first_dots(true)
+			task_timer.toggle_second_dots(true)
+			task_timer.state = task_timer.TimerState.STOPPED
 	
 	if settings_data.show_clock:
 		var current_time: Dictionary = Time.get_time_dict_from_system()
@@ -89,6 +97,7 @@ func _input(event: InputEvent) -> void:
 
 
 func connect_signals() -> void:
+	task_timer.size_changed.connect(_on_task_timer_size_changed)
 	settings_panel.color_changed.connect(_on_digit_color_changed)
 	settings_panel.bg_color_changed.connect(_on_background_color_changed)
 	settings_panel.scale_changed.connect(_on_scale_changed)
@@ -135,12 +144,14 @@ func set_button_shortcut_events() -> void:
 	show_clock_button.shortcut = Shortcut.new()
 	minimize_app_button.shortcut = Shortcut.new()
 	show_list_button.shortcut = Shortcut.new()
+	show_settings_button.shortcut = Shortcut.new()
 	
 	play_pause_button.shortcut.events = InputMap.action_get_events("play_pause")
 	stop_button.shortcut.events = InputMap.action_get_events("stop")
 	show_clock_button.shortcut.events = InputMap.action_get_events("show_clock")
 	minimize_app_button.shortcut.events = InputMap.action_get_events("minimize_app")
 	show_list_button.shortcut.events = InputMap.action_get_events("show_list")
+	show_settings_button.shortcut.events = InputMap.action_get_events("show_settings")
 
 
 func save_settings_data() -> void:
@@ -224,14 +235,13 @@ func apply_settings_data() -> void:
 	task_timer.set_digit_color(settings_data.digit_color, settings_data.show_unlit_segments)
 	task_timer.set_background_color(settings_data.background_color)
 	_on_show_seconds_toggled(settings_data.show_seconds)
-	task_timer.toggle_dots(true)
 	timer_and_buttons.set_timer_scale(settings_data.timer_scale)
 	timer_and_buttons.position = settings_data.timer_position
 	timer_and_buttons.reposition_timer(false)
 	timer_and_buttons.find_quadrant_and_reorder()
 	set_always_on_top(settings_data.always_on_top)
-	system_tray.set_always_on_top_checked(settings_data.always_on_top)
 	# Visible settings
+	system_tray.set_always_on_top_checked(settings_data.always_on_top)
 	settings_panel.set_picked_scale(settings_data.timer_scale)
 	settings_panel.set_picked_display_type(settings_data.display_type)
 	settings_panel.set_digit_color(settings_data.digit_color)
@@ -414,6 +424,15 @@ func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		_on_exit_app_button_pressed()
 		#get_tree().quit() # default behavior
+
+
+func _on_task_timer_size_changed() -> void:
+	timer_and_buttons.set_timer_scale(settings_data.timer_scale)
+	if settings_panel.visible:
+		set_settings_panel_position()
+	if entry_list.visible:
+		set_entry_list_position()
+	set_mouse_passtrough()
 
 
 func _on_scale_changed(s: float) -> void:

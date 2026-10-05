@@ -29,6 +29,10 @@ func set_description(text: String) -> void:
 	description.text = text
 
 
+func get_description() -> String:
+	return description.text
+
+
 func set_start_datetime(text: String) -> void:
 	start_datetime = text
 	start_datetime_label.text = text

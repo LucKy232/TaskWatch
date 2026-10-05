@@ -16,7 +16,6 @@ size_flags_vertical = 0
 mouse_filter = 1
 theme = ExtResource("1_nt3kf")
 script = ExtResource("1_7y1um")
-button_animation_time = null
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1484746069]
 layout_mode = 1

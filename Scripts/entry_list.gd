@@ -23,6 +23,12 @@ var latest_entry_id: int
 var view_mode: ViewMode
 var button_on_tween: Tween
 var button_off_tween: Tween
+var entry_scene: PackedScene = preload(E.ENTRY_SCENE)
+var day_summary_scene: PackedScene = preload(E.DAY_SUMMARY_SCENE)
+var week_summary_scene: PackedScene = preload(E.WEEK_SUMMARY_SCENE)
+var month_summary_scene: PackedScene = preload(E.MONTH_SUMMARY_SCENE)
+var ensure_visible: bool = false
+var ensure_visible_control: Control
 
 signal project_name_changed
 
@@ -41,10 +47,17 @@ enum ViewMode {
 
 func _ready() -> void:
 	view_all_button.set_pressed_no_signal(true)
+	toggle_button_on_tween(view_all_button)
+
+
+func _process(_delta: float) -> void:
+	if ensure_visible and ensure_visible_control:
+		scroll_container.ensure_control_visible.call_deferred(ensure_visible_control)
+		ensure_visible = false
 
 
 func new_entry() -> int:
-	var new: Entry = load(E.ENTRY_SCENE).instantiate() as Entry
+	var new: Entry = entry_scene.instantiate() as Entry
 	entries_container.add_child(new)
 	var eid: int = entries.size()
 	new.id = eid
@@ -52,6 +65,20 @@ func new_entry() -> int:
 	entries[eid] = new
 	latest_entry_id = eid
 	return eid
+
+
+func new_entry_from_task(task: Task) -> void:
+	var eid: int = new_entry()
+	entries[eid].set_description(task.description)
+	entries[eid].set_duration(task.time_elapsed / 1000)
+	entries[eid].set_break_duration(task.break_time_elapsed / 1000)
+	entries[eid].set_start_datetime(task.start_datetime)
+	entries[eid].set_end_datetime(task.end_datetime)
+	entries[eid].visible = bool(view_mode == ViewMode.ALL || view_mode == ViewMode.TODAY || view_mode == ViewMode.THIS_WEEK || view_mode == ViewMode.THIS_MONTH)
+	add_entry_to_day_summary(entries[eid], true)
+	add_entry_to_week_summary(entries[eid], true)
+	add_entry_to_month_summary(entries[eid], true)
+	scroll_to_bottom_timer.start()
 
 
 func populate_entries_from_dict(dict: Dictionary) -> void:
@@ -69,17 +96,9 @@ func build_all_summaries() -> void:
 	build_summaries_day()
 	build_summaries_week()
 	build_summaries_month()
-
-
-func new_entry_from_task(task: Task) -> void:
-	var eid: int = new_entry()
-	entries[eid].set_description(task.description)
-	entries[eid].set_duration(task.time_elapsed / 1000)
-	entries[eid].set_break_duration(task.break_time_elapsed / 1000)
-	entries[eid].set_start_datetime(task.start_datetime)
-	entries[eid].set_end_datetime(task.end_datetime)
-	entries[eid].visible = bool(view_mode == ViewMode.ALL || view_mode == ViewMode.TODAY || view_mode == ViewMode.THIS_WEEK || view_mode == ViewMode.THIS_MONTH)
-	scroll_to_bottom_timer.start()
+	update_summaries_day()
+	update_summaries_week()
+	update_summaries_month()
 
 
 func set_entry_data(eid: int, entry_dict: Dictionary) -> void:
@@ -89,6 +108,13 @@ func set_entry_data(eid: int, entry_dict: Dictionary) -> void:
 
 func set_project_name(_name: String) -> void:
 	project_name.text = _name
+
+
+func get_last_entry_task_description() -> String:
+	if entries.size() == 0:
+		return ""
+	var last_entry: Entry = entries[entries.keys()[-1]]
+	return last_entry.get_description()
 
 
 func all_entries_to_json() -> Dictionary:
@@ -125,7 +151,7 @@ func change_view_mode(previous: ViewMode) -> void:
 			var today_week_day: int = today_date["weekday"]
 			for eid in entries:
 				var datetime: Dictionary = Time.get_datetime_dict_from_datetime_string(entries[eid].start_datetime, false)
-				entries[eid].visible = Formatter.less_than_days_ago(datetime, today_date, today_week_day - 1)
+				entries[eid].visible = Formatter.less_than_days_ago(datetime, today_date, today_week_day - 1 if today_week_day > 0 else 6)
 		ViewMode.THIS_MONTH:
 			var today_date: Dictionary = Time.get_date_dict_from_system()
 			var this_month: int = today_date["month"]
@@ -177,59 +203,89 @@ func hide_previous_summaries(previous_view: ViewMode) -> void:
 
 func build_summaries_day() -> void:
 	for eid in entries:
-		var date_string: String = entries[eid].start_datetime.split(" ")[0]
-		if !summaries_day.has(date_string):
-			var new: DaySummary = load(E.DAY_SUMMARY_SCENE).instantiate() as DaySummary
-			entries_container.add_child(new)
-			new.name = "DaySummary"
-			new.set_date(date_string)
-			new.add_active_duration(entries[eid].duration)
-			new.add_break_duration(entries[eid].break_duration)
-			new.visible = bool(view_mode == ViewMode.DAY_SUMMARY)
-			summaries_day[date_string] = new
-		else:
-			summaries_day[date_string].add_active_duration(entries[eid].duration)
-			summaries_day[date_string].add_break_duration(entries[eid].break_duration)
+		add_entry_to_day_summary(entries[eid])
+
+
+func add_entry_to_day_summary(e: Entry, update_text: bool = false) -> void:
+	var date_string: String = e.start_datetime.split(" ")[0]
+	if !summaries_day.has(date_string):
+		var new: DaySummary = day_summary_scene.instantiate() as DaySummary
+		entries_container.add_child(new)
+		new.name = "DaySummary"
+		new.set_date(date_string)
+		new.visible = bool(view_mode == ViewMode.DAY_SUMMARY)
+		new.full_task_list_toggled.connect(_on_entry_resized.bind(new))
+		summaries_day[date_string] = new
+	summaries_day[date_string].add_entry(e)
+	if update_text:
+		summaries_day[date_string].update_text()
 
 
 func build_summaries_week() -> void:
-	var today_date: Dictionary = Time.get_date_dict_from_system()
 	for eid in entries:
-		var date_dict: Dictionary = Time.get_datetime_dict_from_datetime_string(entries[eid].start_datetime, true)
-		var week_dict: Dictionary = Formatter.get_week_start_dict(date_dict)
-		var week_string: String = str("%d-%d-%d" % [week_dict["year"], week_dict["month"], week_dict["day"]])
-		if !summaries_week.has(week_string):
-			var new: WeekSummary = load(E.WEEK_SUMMARY_SCENE).instantiate() as WeekSummary
-			entries_container.add_child(new)
-			new.name = "WeekSummary"
-			new.set_date(week_string)
-			var days_passed: Vector2i = Formatter.get_week_days_passed(today_date, week_dict)
-			new.set_days_passed(days_passed.x, days_passed.y)
-			new.visible = bool(view_mode == ViewMode.WEEK_SUMMARY)
-			summaries_week[week_string] = new
-		summaries_week[week_string].add_active_duration(entries[eid].duration)
-		summaries_week[week_string].add_break_duration(entries[eid].break_duration)
-		summaries_week[week_string].add_active_day(date_dict["weekday"])
+		add_entry_to_week_summary(entries[eid])
+
+
+func add_entry_to_week_summary(e: Entry, update_text: bool = false) -> void:
+	var today_date: Dictionary = Time.get_date_dict_from_system()
+	var date_dict: Dictionary = Time.get_datetime_dict_from_datetime_string(e.start_datetime, true)
+	var week_dict: Dictionary = Formatter.get_week_start_dict(date_dict)
+	var week_string: String = str("%d-%d-%d" % [week_dict["year"], week_dict["month"], week_dict["day"]])
+	if !summaries_week.has(week_string):
+		var new: WeekSummary = week_summary_scene.instantiate() as WeekSummary
+		entries_container.add_child(new)
+		new.name = "WeekSummary"
+		new.set_date(week_string)
+		var days_passed: Vector2i = Formatter.get_week_days_passed(today_date, week_dict)
+		new.set_days_passed(days_passed.x, days_passed.y)
+		new.visible = bool(view_mode == ViewMode.WEEK_SUMMARY)
+		new.full_task_list_toggled.connect(_on_entry_resized.bind(new))
+		summaries_week[week_string] = new
+	summaries_week[week_string].add_entry(e)
+	summaries_week[week_string].add_active_day(date_dict["weekday"])
+	if update_text:
+		summaries_week[week_string].update_text()
 
 
 func build_summaries_month() -> void:
-	var today_date: Dictionary = Time.get_date_dict_from_system()
 	for eid in entries:
-		var date_dict: Dictionary = Time.get_datetime_dict_from_datetime_string(entries[eid].start_datetime, true)
-		var date_string: String = entries[eid].start_datetime.split(" ")[0]
-		var month_string: String = str("%s-%s" % [date_string.split("-")[0], date_string.split("-")[1]])
-		if !summaries_month.has(month_string):
-			var new: MonthSummary = load(E.MONTH_SUMMARY_SCENE).instantiate() as MonthSummary
-			entries_container.add_child(new)
-			new.name = "MonthSummary"
-			new.set_date(date_string)
-			var days_passed: Vector2i = Formatter.get_month_days_passed(today_date, date_dict)
-			new.set_days_passed(days_passed.x, days_passed.y)
-			new.visible = bool(view_mode == ViewMode.MONTH_SUMMARY)
-			summaries_month[month_string] = new
-		summaries_month[month_string].add_active_duration(entries[eid].duration)
-		summaries_month[month_string].add_break_duration(entries[eid].break_duration)
-		summaries_month[month_string].add_active_day(date_dict["day"])
+		add_entry_to_month_summary(entries[eid])
+
+
+func add_entry_to_month_summary(e: Entry, update_text: bool = false) -> void:
+	var today_date: Dictionary = Time.get_date_dict_from_system()
+	var date_dict: Dictionary = Time.get_datetime_dict_from_datetime_string(e.start_datetime, true)
+	var date_string: String = e.start_datetime.split(" ")[0]
+	var month_string: String = str("%s-%s" % [date_string.split("-")[0], date_string.split("-")[1]])
+	if !summaries_month.has(month_string):
+		var new: MonthSummary = month_summary_scene.instantiate() as MonthSummary
+		entries_container.add_child(new)
+		new.name = "MonthSummary"
+		new.set_date(date_string)
+		var days_passed: Vector2i = Formatter.get_month_days_passed(today_date, date_dict)
+		new.set_days_passed(days_passed.x, days_passed.y)
+		new.visible = bool(view_mode == ViewMode.MONTH_SUMMARY)
+		new.full_task_list_toggled.connect(_on_entry_resized.bind(new))
+		summaries_month[month_string] = new
+	summaries_month[month_string].add_entry(e)
+	summaries_month[month_string].add_active_day(date_dict["day"])
+	if update_text:
+		summaries_month[month_string].update_text()
+
+
+func update_summaries_day() -> void:
+	for day in summaries_day:
+		summaries_day[day].update_text()
+
+
+func update_summaries_week() -> void:
+	for week in summaries_week:
+		summaries_week[week].update_text()
+
+
+func update_summaries_month() -> void:
+	for month in summaries_month:
+		summaries_month[month].update_text()
 
 
 func clear_summaries_day() -> void:
@@ -248,6 +304,23 @@ func clear_summaries_month() -> void:
 	for m in summaries_month:
 		summaries_month[m].queue_free()
 	summaries_month.clear()
+
+
+func remove_entry_from_summaries(e: Entry) -> void:
+	var date_string: String = e.start_datetime.split(" ")[0]
+	var date_dict: Dictionary = Time.get_datetime_dict_from_datetime_string(e.start_datetime, true)
+	var week_dict: Dictionary = Formatter.get_week_start_dict(date_dict)
+	var week_string: String = str("%d-%d-%d" % [week_dict["year"], week_dict["month"], week_dict["day"]])
+	var month_string: String = str("%s-%s" % [date_string.split("-")[0], date_string.split("-")[1]])
+	if summaries_day.has(date_string):
+		summaries_day[date_string].remove_entry(e)
+		summaries_day[date_string].update_text()
+	if summaries_week.has(week_string):
+		summaries_week[week_string].remove_entry(e)
+		summaries_week[week_string].update_text()
+	if summaries_month.has(month_string):
+		summaries_month[month_string].remove_entry(e)
+		summaries_month[month_string].update_text()
 
 
 func toggle_button_on_tween(button: Button) -> void:
@@ -270,6 +343,7 @@ func _on_entry_erased(id: int) -> void:
 	if !entries.has(id):
 		print("No id")
 		return
+	remove_entry_from_summaries(entries[id])
 	entries[id].queue_free()
 	entries.erase(id)
 
@@ -386,3 +460,8 @@ func _on_scroll_to_bottom_timer_timeout() -> void:
 func _on_visibility_changed() -> void:
 	if visible:
 		scroll_to_bottom_timer.start()
+
+
+func _on_entry_resized(control: Control) -> void:
+	ensure_visible = true
+	ensure_visible_control = control

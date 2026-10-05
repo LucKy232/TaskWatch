@@ -14,17 +14,18 @@ const seven_segment: Dictionary[String, int] = {
 	"D": 0b0111_1110, "E": 0b0100_1111, "F": 0b0100_0111,
 }
 
-static func get_seven_segment_digit(digit: int, decimal_point: bool = false) -> int:
+static func get_seven_segment_digit(digit: int) -> int:
 	if !seven_segment.has(str(digit)):
 		return 0
-	var bits: int = seven_segment[str(digit)]
-	return (bits | 0b1000_0000) if decimal_point else bits
+	return seven_segment[str(digit)]
 
-static func get_seven_segment_symbol(symbol: String, decimal_point: bool = false) -> int:
+static func get_seven_segment_symbol(symbol: String) -> int:
 	if !seven_segment.has(symbol):
 		return 0
-	var bits: int = seven_segment[symbol]
-	return (bits | 0b1000_0000) if decimal_point else bits
+	return seven_segment[symbol]
+
+static func add_seven_segment_decimal_point(bits: int) -> int:
+	return bits | 0b1000_0000
 
 
 ## --- 14 segment Display + Decimal Point ---
@@ -40,17 +41,18 @@ const fourteen_segment: Dictionary[String, int] = {
 	"7": 0b0010_1000_0000_001, "8": 0b0000_0001_1111_111, "9": 0b0000_0001_1100_111,
 }
 
-static func get_fourteen_segment_digit(digit: int, decimal_point: bool = false) -> int:
+static func get_fourteen_segment_digit(digit: int) -> int:
 	if !fourteen_segment.has(str(digit)):
 		return 0
-	var bits: int = fourteen_segment[str(digit)]
-	return (bits | 0b1000_0000_0000_000) if decimal_point else bits
+	return fourteen_segment[str(digit)]
 
-static func get_fourteen_segment_symbol(symbol: String, decimal_point: bool = false) -> int:
+static func get_fourteen_segment_symbol(symbol: String) -> int:
 	if !fourteen_segment.has(symbol):
 		return 0
-	var bits: int = fourteen_segment[symbol]
-	return (bits | 0b1000_0000_0000_000) if decimal_point else bits
+	return fourteen_segment[symbol]
+
+static func add_fourteen_segment_decimal_point(bits: int) -> int:
+	return (bits | 0b1000_0000_0000_000)
 
 
 ## --- 3x5 Dot Matrix Display ---
@@ -58,17 +60,48 @@ const dot3x5: Dictionary[String, int] = {
 	"":  0b000_000_000_000_000, "-": 0b000_000_111_000_000, "0": 0b111_101_101_101_111,
 	"1": 0b001_011_001_001_001, "2": 0b111_001_111_100_111, "3": 0b111_001_011_001_111,
 	"4": 0b001_011_101_111_001, "5": 0b111_100_111_001_111, "6": 0b110_100_111_101_111,
-	"7": 0b111_001_010_010_010, "8": 0b111_101_111_101_111, "9": 0b111_101_111_001_011,
+	"7": 0b111_001_010_100_100, "8": 0b111_101_111_101_111, "9": 0b111_101_111_001_011,
+	":": 0b000_010_000_010_000,
+}
+# Diffrent 2, 3 & 8
+const dot3x5_alt: Dictionary[String, int] = {
+	"":  0b000_000_000_000_000, "-": 0b000_000_111_000_000, "0": 0b111_101_101_101_111,
+	"1": 0b010_110_010_010_010, "2": 0b111_101_001_010_111, "3": 0b111_001_010_001_111,
+	"4": 0b001_011_101_111_001, "5": 0b111_100_111_001_111, "6": 0b110_100_111_101_111,
+	"7": 0b111_001_010_100_100, "8": 0b111_101_010_101_111, "9": 0b111_101_111_001_011,
+	":": 0b000_010_000_010_000,
 }
 
-static func get_dot3x5_segment_digit(digit: int, _decimal_point: bool = false) -> int:
+static func get_dot3x5_segment_digit(digit: int) -> int:
 	if !dot3x5.has(str(digit)):
 		return 0
 	var bits: int = dot3x5[str(digit)]
 	return bits
 
-static func get_dot3x5_segment_symbol(symbol: String, _decimal_point: bool = false) -> int:
+static func get_dot3x5_segment_symbol(symbol: String) -> int:
 	if !dot3x5.has(symbol):
 		return 0
 	var bits: int = dot3x5[symbol]
+	return bits
+
+
+## --- 6x5 Dot Matrix Display ---
+const dot6x5: Dictionary[String, int] = {
+	"":  0b000000_000000_000000_000000_000000, "-": 0b000000_000000_000000_000000_000000, "0": 0b011110_100001_100001_100001_011110,
+	"1": 0b000010_000110_000010_000010_000010, "2": 0b111110_000001_011110_100000_111111, "3": 0b111110_000001_011110_000001_111110,
+	"4": 0b000110_001010_010010_111111_000010, "5": 0b111111_100000_111110_000001_111110, "6": 0b011111_100000_111110_100001_011110,
+	"7": 0b111111_000010_000100_001000_010000, "8": 0b011110_100001_011110_100001_011110, "9": 0b011110_100001_011111_000001_011110,
+}
+# Alternative "7": 0b111111_000010_001100_010000_010000
+
+static func get_dot6x5_segment_digit(digit: int) -> int:
+	if !dot3x5.has(str(digit)):
+		return 0
+	var bits: int = dot6x5[str(digit)]
+	return bits
+
+static func get_dot6x5_segment_symbol(symbol: String) -> int:
+	if !dot3x5.has(symbol):
+		return 0
+	var bits: int = dot6x5[symbol]
 	return bits
