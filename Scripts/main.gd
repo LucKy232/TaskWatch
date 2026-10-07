@@ -21,10 +21,10 @@ const MAIN_THEME = preload("uid://dirmfsg7xnbxr")
 @onready var system_tray: SystemTray = $SystemTray
 var settings_data: SettingsData = SettingsData.new()
 var current_task: Task = Task.new(0)
+var manually_hide_buttons: bool = false
 
 
 func _ready() -> void:
-	var timer: Stopwatch = Stopwatch.new("Startup time: ")
 	get_tree().set_auto_accept_quit(false)
 	fullscreen_window.call_deferred()
 	maximize_window.call_deferred()
@@ -44,14 +44,22 @@ func _ready() -> void:
 	else:
 		load_current_project_file()
 		task_description_line_edit.text = entry_list.get_last_entry_task_description()
-	timer.stop()
+		current_task.description = task_description_line_edit.text
 
-  
+
+func is_editing_text() -> bool:
+	return task_description_line_edit.is_editing() or entry_list.project_name.is_editing()
+
+
 func _process(_delta: float) -> void:
+	if get_window().has_focus() and !top_buttons_control.visible and !manually_hide_buttons:
+		show_buttons()
 	if !get_window().has_focus() and top_buttons_control.visible:
 		hide_buttons()
+	#if Input.is_action_just_pressed("screenshot"):
+		#get_viewport().get_texture().get_image().save_png("res://screen12.png")
 	
-	if !task_description_line_edit.is_editing():
+	if !is_editing_text():
 		if Input.is_action_just_pressed("scale_up", true):
 			settings_panel.scale_up()
 		if Input.is_action_just_pressed("scale_down", true):
@@ -61,6 +69,7 @@ func _process(_delta: float) -> void:
 		if Input.is_action_just_pressed("maximize_window", true):
 			maximize_window()
 		if Input.is_action_just_pressed("hide_buttons", true):
+			manually_hide_buttons = true
 			hide_buttons()
 	
 	if current_task.is_started:
@@ -132,6 +141,7 @@ func maximize_window() -> void:
 	show_buttons()
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, false)
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MAXIMIZED)
+	get_window().grab_focus()
 
 
 func fullscreen_window() -> void:
@@ -377,6 +387,7 @@ func set_settings_panel_position() -> void:
 
 
 func show_buttons() -> void:
+	manually_hide_buttons = false
 	var set_passtrough: bool = false
 	var set_panels: bool = false
 	

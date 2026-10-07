@@ -1,0 +1,16 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://ke21fehx3lu0"]
+
+[ext_resource type="Shader" uid="uid://b2e81unbb4dje" path="res://Displays/DotMatrixDisplay/dot_matrix.gdshader" id="1_6u4os"]
+[ext_resource type="Texture2D" uid="uid://cftgdhlchuue5" path="res://Displays/texture_atlas.png" id="2_ljg1j"]
+
+[resource]
+shader = ExtResource("1_6u4os")
+shader_parameter/texture_mask = ExtResource("2_ljg1j")
+shader_parameter/UV_OFFSET = Vector2(0.6055, 0)
+shader_parameter/UV_SCALE = Vector2(0.0625, 0.25)
+shader_parameter/repeat_texture = Vector2(3, 7)
+shader_parameter/dot_zoom = 0.025
+shader_parameter/dot_zoom_margin = 0.025
+shader_parameter/digit_color = Color(1, 1, 1, 1)
+shader_parameter/unlit_color = Color(1, 1, 1, 0.08235294)
+shader_parameter/bitmask = 0

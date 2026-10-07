@@ -7,8 +7,8 @@
 font_size = 12
 
 [node name="Entry" type="Control" unique_id=236321926]
-clip_contents = true
 custom_minimum_size = Vector2(310, 71)
+clip_contents = true
 layout_mode = 3
 anchors_preset = 0
 mouse_filter = 1

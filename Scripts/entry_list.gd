@@ -229,6 +229,7 @@ func build_summaries_week() -> void:
 func add_entry_to_week_summary(e: Entry, update_text: bool = false) -> void:
 	var today_date: Dictionary = Time.get_date_dict_from_system()
 	var date_dict: Dictionary = Time.get_datetime_dict_from_datetime_string(e.start_datetime, true)
+	var date_string: String = e.start_datetime.split(" ")[0]
 	var week_dict: Dictionary = Formatter.get_week_start_dict(date_dict)
 	var week_string: String = str("%d-%d-%d" % [week_dict["year"], week_dict["month"], week_dict["day"]])
 	if !summaries_week.has(week_string):
@@ -241,8 +242,7 @@ func add_entry_to_week_summary(e: Entry, update_text: bool = false) -> void:
 		new.visible = bool(view_mode == ViewMode.WEEK_SUMMARY)
 		new.full_task_list_toggled.connect(_on_entry_resized.bind(new))
 		summaries_week[week_string] = new
-	summaries_week[week_string].add_entry(e)
-	summaries_week[week_string].add_active_day(date_dict["weekday"])
+	summaries_week[week_string].add_entry(e, date_string)
 	if update_text:
 		summaries_week[week_string].update_text()
 
@@ -267,8 +267,7 @@ func add_entry_to_month_summary(e: Entry, update_text: bool = false) -> void:
 		new.visible = bool(view_mode == ViewMode.MONTH_SUMMARY)
 		new.full_task_list_toggled.connect(_on_entry_resized.bind(new))
 		summaries_month[month_string] = new
-	summaries_month[month_string].add_entry(e)
-	summaries_month[month_string].add_active_day(date_dict["day"])
+	summaries_month[month_string].add_entry(e, date_string)
 	if update_text:
 		summaries_month[month_string].update_text()
 
@@ -314,12 +313,16 @@ func remove_entry_from_summaries(e: Entry) -> void:
 	var month_string: String = str("%s-%s" % [date_string.split("-")[0], date_string.split("-")[1]])
 	if summaries_day.has(date_string):
 		summaries_day[date_string].remove_entry(e)
-		summaries_day[date_string].update_text()
+		if summaries_day[date_string].active_duration < 1 and summaries_day[date_string].break_duration < 1:
+			summaries_day[date_string].queue_free()
+			summaries_day.erase(date_string)
+		else:
+			summaries_day[date_string].update_text()
 	if summaries_week.has(week_string):
-		summaries_week[week_string].remove_entry(e)
+		summaries_week[week_string].remove_entry(e, date_string)
 		summaries_week[week_string].update_text()
 	if summaries_month.has(month_string):
-		summaries_month[month_string].remove_entry(e)
+		summaries_month[month_string].remove_entry(e, date_string)
 		summaries_month[month_string].update_text()
 
 

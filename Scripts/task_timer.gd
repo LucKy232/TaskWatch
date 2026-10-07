@@ -5,6 +5,8 @@ class_name TaskTimer extends Control
 @export var material_7_segment: ShaderMaterial
 @export var material_14_segment: ShaderMaterial
 @export var material_dot3x5: ShaderMaterial
+@export var material_dot5x7: ShaderMaterial
+@export var material_dot3x7: ShaderMaterial
 @export var material_dot6x5: ShaderMaterial
 @export var segments: Array[ColorRect]
 @onready var h_box_container: HBoxContainer = $HBoxContainer
@@ -60,14 +62,15 @@ func set_digit_color(color: Color, show_unlit: bool = true) -> void:
 
 
 func cycle_dot_types() -> void:
-	if display_type == E.DisplayType.DOT_MATRIX_3x5 or display_type == E.DisplayType.DOT_MATRIX_6x5:
-		dot_id += 1
-		if !dot_coords.has(dot_id):
-			dot_id = 0
-		for s in segments:
-			s.material.set_shader_parameter("UV_OFFSET", dot_coords[dot_id])
-		dots_1.material.set_shader_parameter("UV_OFFSET", dot_coords[dot_id])
-		dots_2.material.set_shader_parameter("UV_OFFSET", dot_coords[dot_id])
+	if display_type == E.DisplayType.SEVEN_SEGMENT or display_type == E.DisplayType.FOURTEEN_SEGMENT:
+		return
+	dot_id += 1
+	if !dot_coords.has(dot_id):
+		dot_id = 0
+	for s in segments:
+		s.material.set_shader_parameter("UV_OFFSET", dot_coords[dot_id])
+	dots_1.material.set_shader_parameter("UV_OFFSET", dot_coords[dot_id])
+	dots_2.material.set_shader_parameter("UV_OFFSET", dot_coords[dot_id])
 
 
 func toggle_seconds(toggle_on: bool) -> void:
@@ -88,29 +91,38 @@ func change_display_type(type: E.DisplayType) -> void:
 				segment.material = material_7_segment.duplicate()
 				if segment.custom_minimum_size != Vector2(80.0, 128.0):
 					segment.custom_minimum_size = Vector2(80.0, 128.0)
-					size = Vector2.ZERO
+			size = Vector2.ZERO
 			size_changed.emit()
 		E.DisplayType.FOURTEEN_SEGMENT:
 			for segment in segments:
 				segment.material = material_14_segment.duplicate()
 				if segment.custom_minimum_size != Vector2(80.0, 128.0):
 					segment.custom_minimum_size = Vector2(80.0, 128.0)
-					size = Vector2.ZERO
+			size = Vector2.ZERO
 			size_changed.emit()
 		E.DisplayType.DOT_MATRIX_3x5:
 			for segment in segments:
 				segment.material = material_dot3x5.duplicate()
 				if segment.custom_minimum_size != Vector2(75.0, 125.0):
 					segment.custom_minimum_size = Vector2(75.0, 125.0)
-					size = Vector2.ZERO
+			size = Vector2.ZERO
 			size_changed.emit()
 		E.DisplayType.DOT_MATRIX_6x5:
 			for segment in segments:
 				segment.material = material_dot6x5.duplicate()
 				if segment.custom_minimum_size != Vector2(150.0, 125.0):
 					segment.custom_minimum_size = Vector2(150.0, 125.0)
-					size = Vector2.ZERO
+			size = Vector2.ZERO
 			size_changed.emit()
+		E.DisplayType.DOT_MATRIX_5x7:
+			for segment in segments:
+				segment.material = material_dot5x7.duplicate()
+				if segment.custom_minimum_size != Vector2(90.0, 126.0):
+					segment.custom_minimum_size = Vector2(90.0, 126.0)
+			size = Vector2.ZERO
+			size_changed.emit()
+	toggle_first_dots(true)
+	toggle_second_dots(true)
 
 
 func change_dots_display_type(last_type: E.DisplayType, current_type: E.DisplayType) -> void:
@@ -148,6 +160,17 @@ func change_dots_display_type(last_type: E.DisplayType, current_type: E.DisplayT
 			dots_2.offset_transform_rotation = 0.0
 			toggle_first_dots(true)
 			toggle_second_dots(true)
+		E.DisplayType.DOT_MATRIX_5x7:
+			dots_1.material = material_dot3x7.duplicate()
+			dots_2.material = material_dot3x7.duplicate()
+			dots_1.custom_minimum_size = Vector2(54.0, 126.0)
+			dots_2.custom_minimum_size = Vector2(54.0, 126.0)
+			dots_1.offset_transform_position = Vector2(0.0, 0.0)
+			dots_2.offset_transform_position = Vector2(0.0, 0.0)
+			dots_1.offset_transform_rotation = 0.0
+			dots_2.offset_transform_rotation = 0.0
+			toggle_first_dots(true)
+			toggle_second_dots(true)
 
 
 func toggle_first_dots(toggled_on: bool) -> void:
@@ -157,6 +180,9 @@ func toggle_first_dots(toggled_on: bool) -> void:
 		E.DisplayType.DOT_MATRIX_3x5, E.DisplayType.DOT_MATRIX_6x5:
 			var bitmask: int = SegmentEncoder.get_dot3x5_segment_symbol(":" if toggled_on else "")
 			dots_1.material.set_shader_parameter("bitmask", bitmask)
+		E.DisplayType.DOT_MATRIX_5x7:
+			var bitmask: int = SegmentEncoder.get_dot3x7_segment_symbol(":" if toggled_on else "")
+			dots_1.material.set_shader_parameter("bitmask", bitmask)
 
 
 func toggle_second_dots(toggled_on: bool) -> void:
@@ -165,6 +191,9 @@ func toggle_second_dots(toggled_on: bool) -> void:
 			dots_2.material.set_shader_parameter("lit", toggled_on)
 		E.DisplayType.DOT_MATRIX_3x5, E.DisplayType.DOT_MATRIX_6x5:
 			var bitmask: int = SegmentEncoder.get_dot3x5_segment_symbol(":" if toggled_on else "")
+			dots_2.material.set_shader_parameter("bitmask", bitmask)
+		E.DisplayType.DOT_MATRIX_5x7:
+			var bitmask: int = SegmentEncoder.get_dot3x7_segment_symbol(":" if toggled_on else "")
 			dots_2.material.set_shader_parameter("bitmask", bitmask)
 
 
@@ -183,10 +212,23 @@ func display_time(hour: int, minute: int, second: int) -> void:
 			decode_function = SegmentEncoder.get_dot3x5_segment_digit
 		E.DisplayType.DOT_MATRIX_6x5:
 			decode_function = SegmentEncoder.get_dot6x5_segment_digit
+		E.DisplayType.DOT_MATRIX_5x7:
+			decode_function = SegmentEncoder.get_dot5x7_segment_digit
 	
 	var ms: int = Time.get_ticks_msec() % 2000	# Animation time
 	var decimal_points: Array[bool]
-	var bitmasks: Array[int]
+	var bitmasks
+	match display_type:
+		E.DisplayType.DOT_MATRIX_5x7:
+			if show_seconds:
+				bitmasks = [Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO]
+			else:
+				bitmasks = [Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO]
+		_:
+			if show_seconds:
+				bitmasks = [0, 0, 0, 0, 0, 0]
+			else:
+				bitmasks = [0, 0, 0, 0]
 	if show_seconds:
 		decimal_points = [false, false, false, false, false, false]
 		bitmasks = [0, 0, 0, 0, 0, 0]
@@ -212,9 +254,10 @@ func display_time(hour: int, minute: int, second: int) -> void:
 	bitmasks[2] = decode_function.call(minute_tens)
 	bitmasks[3] = decode_function.call(minute - minute_tens * 10)
 	
-	for i in decimal_points.size():
-		if decimal_points[i]:
-			bitmasks[i] = add_decimal_point(bitmasks[i])
+	if display_type == E.DisplayType.SEVEN_SEGMENT or display_type == E.DisplayType.FOURTEEN_SEGMENT:
+		for i in decimal_points.size():
+			if decimal_points[i]:
+				bitmasks[i] = add_decimal_point(bitmasks[i])
 	
 	segments[0].material.set_shader_parameter("bitmask", bitmasks[0])
 	segments[1].material.set_shader_parameter("bitmask", bitmasks[1])
@@ -223,10 +266,11 @@ func display_time(hour: int, minute: int, second: int) -> void:
 	if show_seconds:
 		bitmasks[4] = decode_function.call(seconds_tens)
 		bitmasks[5] = decode_function.call(second - seconds_tens * 10)
-		if decimal_points[4]:
-			bitmasks[4] = add_decimal_point(bitmasks[4])
-		if decimal_points[5]:
-			bitmasks[5] = add_decimal_point(bitmasks[5])
+		if display_type == E.DisplayType.SEVEN_SEGMENT or display_type == E.DisplayType.FOURTEEN_SEGMENT:
+			if decimal_points[4]:
+				bitmasks[4] = add_decimal_point(bitmasks[4])
+			if decimal_points[5]:
+				bitmasks[5] = add_decimal_point(bitmasks[5])
 		segments[4].material.set_shader_parameter("bitmask", bitmasks[4])
 		segments[5].material.set_shader_parameter("bitmask", bitmasks[5])
 
@@ -240,11 +284,19 @@ func dots_playing_animation(time_ms: int) -> void:
 
 func dots_paused_animation(time_ms: int) -> void:
 	if display_type == E.DisplayType.SEVEN_SEGMENT or display_type == E.DisplayType.FOURTEEN_SEGMENT:
+		toggle_first_dots(true)
+		toggle_second_dots(true)
 		return
+	var bitmask: int = 0
+	match display_type:
+		E.DisplayType.DOT_MATRIX_3x5, E.DisplayType.DOT_MATRIX_6x5:
+			bitmask = SegmentEncoder.get_dot3x5_segment_symbol(":" if (time_ms / 500) % 2 == 0 else "|")
+		E.DisplayType.DOT_MATRIX_5x7:
+			bitmask = SegmentEncoder.get_dot3x7_segment_symbol(":" if (time_ms / 500) % 2 == 0 else "|")
 	if show_seconds:
-		dots_2.material.set_shader_parameter("bitmask", paused_bits1 if (time_ms / 500) % 2 == 0 else paused_bits2)
+		dots_2.material.set_shader_parameter("bitmask", bitmask)
 	else:
-		dots_1.material.set_shader_parameter("bitmask", paused_bits1 if (time_ms / 500) % 2 == 0 else paused_bits2)
+		dots_1.material.set_shader_parameter("bitmask", bitmask)
 
 
 func add_decimal_point(bitmask: int) -> int:

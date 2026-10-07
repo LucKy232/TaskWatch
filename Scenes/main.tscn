@@ -7,10 +7,10 @@
 [ext_resource type="Texture2D" uid="uid://1vutdcm3s7mm" path="res://Icons/StopButton.svg" id="5_ee4r6"]
 [ext_resource type="Texture2D" uid="uid://btwpx6nbhlnnc" path="res://Icons/ClockButton.svg" id="6_gt3je"]
 [ext_resource type="PackedScene" uid="uid://bmvxpyefy5ihe" path="res://Scenes/task_timer.tscn" id="7_3pmx8"]
-[ext_resource type="Shader" uid="uid://dfca1rqt07xlt" path="res://Displays/7SegmentDisplay/7_segment.gdshader" id="8_b3802"]
 [ext_resource type="Shader" uid="uid://dexvgpvdbx7xj" path="res://Displays/dots.gdshader" id="8_fevyy"]
-[ext_resource type="Texture2D" uid="uid://cftgdhlchuue5" path="res://Displays/texture_atlas.png" id="9_fevyy"]
-[ext_resource type="Shader" uid="uid://b6up5wgfim448" path="res://Displays/14SegmentDisplay/14_segment.gdshader" id="10_hibaj"]
+[ext_resource type="Texture2D" uid="uid://cftgdhlchuue5" path="res://Displays/texture_atlas.png" id="9_hibaj"]
+[ext_resource type="Shader" uid="uid://dfca1rqt07xlt" path="res://Displays/7SegmentDisplay/7_segment.gdshader" id="10_pdsj5"]
+[ext_resource type="Shader" uid="uid://b6up5wgfim448" path="res://Displays/14SegmentDisplay/14_segment.gdshader" id="11_ee4r6"]
 [ext_resource type="Texture2D" uid="uid://cay3cx7m6ycjx" path="res://Icons/ListButton.svg" id="11_ueoa1"]
 [ext_resource type="Texture2D" uid="uid://4mknea08ggfl" path="res://Icons/SettingsButton.svg" id="12_6vcvc"]
 [ext_resource type="Texture2D" uid="uid://byllhofhpqkfs" path="res://Icons/MinimizeButton.svg" id="13_7k868"]
@@ -20,36 +20,36 @@
 [ext_resource type="Script" uid="uid://chlge7jq1sodk" path="res://Scripts/system_tray.gd" id="17_neg2b"]
 [ext_resource type="Texture2D" uid="uid://1f0gp20mi1ip" path="res://icon.png" id="18_r33sp"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_hibaj"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fevyy"]
 resource_local_to_scene = true
 shader = ExtResource("8_fevyy")
 shader_parameter/digit_color = Color(0.72156864, 0, 0, 1)
 shader_parameter/unlit_color = Color(0.72156864, 0, 0, 0.09803922)
-shader_parameter/texture_mask = ExtResource("9_fevyy")
+shader_parameter/texture_mask = ExtResource("9_hibaj")
 shader_parameter/lit = true
 shader_parameter/UV_OFFSET = Vector2(23.935, 0)
 shader_parameter/UV_SCALE = Vector2(0.04, 1)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_pdsj5"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hibaj"]
 resource_local_to_scene = true
 resource_name = "Material"
-shader = ExtResource("8_b3802")
+shader = ExtResource("10_pdsj5")
 shader_parameter/digit_color = Color(0.72, 0, 0, 1)
 shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
-shader_parameter/texture_mask = ExtResource("9_fevyy")
+shader_parameter/texture_mask = ExtResource("9_hibaj")
 shader_parameter/bitmask = 118
 shader_parameter/UV_OFFSET1 = Vector2(0, 0)
 shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
 shader_parameter/UV_OFFSET2 = Vector2(0.992, 0)
 shader_parameter/UV_SCALE2 = Vector2(0.151, 1)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ee4r6"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pdsj5"]
 resource_local_to_scene = true
 resource_name = "Material"
-shader = ExtResource("10_hibaj")
+shader = ExtResource("11_ee4r6")
 shader_parameter/digit_color = Color(0.72, 0, 0, 1)
 shader_parameter/unlit_color = Color(0.72, 0, 0, 0.09803922)
-shader_parameter/texture_mask = ExtResource("9_fevyy")
+shader_parameter/texture_mask = ExtResource("9_hibaj")
 shader_parameter/bitmask = 32767
 shader_parameter/UV_OFFSET1 = Vector2(2.004, 0)
 shader_parameter/UV_SCALE1 = Vector2(0.151, 1)
@@ -68,7 +68,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 1
 script = ExtResource("1_b3802")
-settings_file_path = "user://settings_data_dev.json"
 play_icon = ExtResource("2_fevyy")
 pause_icon = ExtResource("3_hibaj")
 
@@ -147,9 +146,9 @@ mouse_filter = 1
 unique_name_in_owner = true
 layout_mode = 1
 mouse_filter = 1
-dots_material = SubResource("ShaderMaterial_hibaj")
-material_7_segment = SubResource("ShaderMaterial_pdsj5")
-material_14_segment = SubResource("ShaderMaterial_ee4r6")
+dots_material = SubResource("ShaderMaterial_fevyy")
+material_7_segment = SubResource("ShaderMaterial_hibaj")
+material_14_segment = SubResource("ShaderMaterial_pdsj5")
 
 [node name="TopButtonsControl" type="Control" parent="TimerAndButtons" unique_id=1607136862]
 unique_name_in_owner = true
@@ -227,7 +226,6 @@ offset_left = 468.0
 offset_top = 237.0
 offset_right = 788.0
 offset_bottom = 637.0
-button_animation_time = 0.2
 
 [node name="AutosaveTimer" type="Timer" parent="." unique_id=1010088092]
 wait_time = 60.0
