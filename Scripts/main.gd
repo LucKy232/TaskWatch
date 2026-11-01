@@ -55,7 +55,7 @@ func _process(_delta: float) -> void:
 	if get_window().has_focus() and !top_buttons_control.visible and !manually_hide_buttons:
 		show_buttons()
 	if !get_window().has_focus() and top_buttons_control.visible:
-		hide_buttons()
+		hide_buttons(true)
 	#if Input.is_action_just_pressed("screenshot"):
 		#get_viewport().get_texture().get_image().save_png("res://screen12.png")
 	
@@ -112,7 +112,7 @@ func connect_signals() -> void:
 	settings_panel.scale_changed.connect(_on_scale_changed)
 	settings_panel.unlit_segments_toggled.connect(_on_unlit_segments_toggled)
 	settings_panel.show_seconds_toggled.connect(_on_show_seconds_toggled)
-	settings_panel.color_picker_toggled.connect(_on_settings_color_picker_toggled)
+	settings_panel.menu_visibility_changed.connect(_on_settings_menu_visibility_changed)
 	settings_panel.always_on_top_toggled.connect(_on_always_on_top_toggled)
 	settings_panel.display_type_changed.connect(_on_display_type_changed)
 	timer_and_buttons.position_changed.connect(_on_draggable_position_changed)
@@ -320,8 +320,8 @@ func set_mouse_passtrough() -> void:
 	if entry_list.is_visible():
 		polygon.append_array(get_entry_list_passtrough())
 	if settings_panel.is_visible():
-		polygon.append_array(settings_panel.get_color_picker_passtrough())
-		polygon.append_array(settings_panel.get_option_button_passtrough())
+		polygon.append_array(settings_panel.get_color_pickers_passtrough())
+		polygon.append_array(settings_panel.get_option_buttons_passtrough())
 	
 	# Simple implementation - take extremes; no combining polygons, has gaps with no passtrough
 	var x_values: Array[float]
@@ -411,9 +411,10 @@ func show_buttons() -> void:
 		set_mouse_passtrough()
 
 
-func hide_buttons() -> void:
-	if get_window().gui_get_focus_owner() is LineEdit and get_window().gui_get_focus_owner().is_editing:
-		return
+func hide_buttons(force_hide: bool = false) -> void:
+	if (get_window().gui_get_focus_owner() is LineEdit and get_window().gui_get_focus_owner().is_editing):
+		if !force_hide:
+			return
 	if top_buttons_control.visible or side_buttons_grid.visible:
 		top_buttons_control.visible = false
 		side_buttons_grid.visible = false
@@ -557,7 +558,7 @@ func _on_draggable_position_changed() -> void:
 	set_mouse_passtrough()
 
 
-func _on_settings_color_picker_toggled() -> void:
+func _on_settings_menu_visibility_changed() -> void:
 	set_mouse_passtrough()
 
 

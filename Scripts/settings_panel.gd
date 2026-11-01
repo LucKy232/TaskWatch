@@ -12,6 +12,7 @@ class_name SettingsPanel extends Control
 var popup_1: PopupPanel	## color_picker_button popup
 var popup_2: PopupPanel	## bg_color_picker_button popup
 var popup_3: PopupMenu	## scale_option_button popup
+var popup_4: PopupMenu	## display_type_option_button popup
 var picked_color: Color
 var picked_bg_color: Color
 
@@ -20,7 +21,7 @@ signal bg_color_changed
 signal scale_changed
 signal unlit_segments_toggled
 signal always_on_top_toggled
-signal color_picker_toggled
+signal menu_visibility_changed
 signal show_seconds_toggled
 signal display_type_changed
 
@@ -29,9 +30,11 @@ func _ready() -> void:
 	popup_1 = color_picker_button.get_popup()
 	popup_2 = bg_color_picker_button.get_popup()
 	popup_3 = scale_option_button.get_popup()
-	popup_1.visibility_changed.connect(_on_color_picker_popup)
-	popup_2.visibility_changed.connect(_on_color_picker_popup)
-	popup_3.visibility_changed.connect(_on_color_picker_popup)
+	popup_4 = display_type_option_button.get_popup()
+	popup_1.visibility_changed.connect(_on_menu_visibility_changed)
+	popup_2.visibility_changed.connect(_on_menu_visibility_changed)
+	popup_3.visibility_changed.connect(_on_menu_visibility_changed)
+	popup_4.visibility_changed.connect(_on_menu_visibility_changed)
 	var app_version: String = ProjectSettings.get_setting("application/config/version")
 	version_number.text = ("v%s" % app_version)
 	populate_scale_option_button()
@@ -92,30 +95,29 @@ func scale_down() -> void:
 	_on_scale_option_button_item_selected(id)
 
 
-func get_color_picker_passtrough() -> PackedVector2Array:
+func get_color_pickers_passtrough() -> PackedVector2Array:
 	var corners: PackedVector2Array = PackedVector2Array()
 	if popup_1.is_visible():
-		var v2p: Vector2 = Vector2(popup_1.position)
-		var v2s: Vector2 = Vector2(popup_1.size)
-		corners.append(v2p)
-		corners.append(v2p + Vector2(v2s.x, 0.0))
-		corners.append(v2p + v2s)
-		corners.append(v2p + Vector2(0.0, v2s.y))
+		corners.append_array(get_popup_panel_corners(popup_1))
 	elif popup_2.is_visible():
-		var v2p: Vector2 = Vector2(popup_2.position)
-		var v2s: Vector2 = Vector2(popup_2.size)
-		corners.append(v2p)
-		corners.append(v2p + Vector2(v2s.x, 0.0))
-		corners.append(v2p + v2s)
-		corners.append(v2p + Vector2(0.0, v2s.y))
+		corners.append_array(get_popup_panel_corners(popup_2))
 	return corners
 
 
-func get_option_button_passtrough() -> PackedVector2Array:
+func get_option_buttons_passtrough() -> PackedVector2Array:
 	var corners: PackedVector2Array = PackedVector2Array()
 	if popup_3.is_visible():
-		var v2p: Vector2 = Vector2(popup_3.position)
-		var v2s: Vector2 = Vector2(popup_3.size)
+		corners.append_array(get_popup_menu_corners(popup_3))
+	if popup_4.is_visible():
+		corners.append_array(get_popup_menu_corners(popup_4))
+	return corners
+
+
+func get_popup_menu_corners(popup: PopupMenu) -> PackedVector2Array:
+	var corners: PackedVector2Array = PackedVector2Array()
+	if popup.is_visible():
+		var v2p: Vector2 = Vector2(popup.position)
+		var v2s: Vector2 = Vector2(popup.size)
 		corners.append(v2p)
 		corners.append(v2p + Vector2(v2s.x, 0.0))
 		corners.append(v2p + v2s)
@@ -123,8 +125,20 @@ func get_option_button_passtrough() -> PackedVector2Array:
 	return corners
 
 
-func _on_color_picker_popup() -> void:
-	color_picker_toggled.emit()
+func get_popup_panel_corners(popup: PopupPanel) -> PackedVector2Array:
+	var corners: PackedVector2Array = PackedVector2Array()
+	if popup.is_visible():
+		var v2p: Vector2 = Vector2(popup.position)
+		var v2s: Vector2 = Vector2(popup.size)
+		corners.append(v2p)
+		corners.append(v2p + Vector2(v2s.x, 0.0))
+		corners.append(v2p + v2s)
+		corners.append(v2p + Vector2(0.0, v2s.y))
+	return corners
+
+
+func _on_menu_visibility_changed() -> void:
+	menu_visibility_changed.emit()
 
 
 func _on_color_picker_button_color_changed(color: Color) -> void:
