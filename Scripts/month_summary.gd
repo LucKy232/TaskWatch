@@ -73,7 +73,12 @@ func update_text() -> void:
 		active_days_average.text = "Active day avg: %s" % Formatter.format_duration(active_duration / entries_days.size())
 	if days_passed > 0:
 		every_day_average.text = "Everyday avg: %s" % Formatter.format_duration(active_duration / days_passed)
+	else:
+		every_day_average.text = ""
+	if (days_passed - weekend_days_passed) > 0:
 		exclude_weekends_average.text = "No Weekend avg: %s" % Formatter.format_duration(active_duration / (days_passed - weekend_days_passed))
+	else:
+		exclude_weekends_average.text = "No Weekend avg: %s" % Formatter.format_duration(active_duration)
 
 
 func set_date(text: String) -> void:
